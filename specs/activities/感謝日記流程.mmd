@@ -1,0 +1,23 @@
+---
+title: 感謝日記流程
+actor: 登入使用者
+features:
+  - gratitude/新增感謝條目.feature
+  - gratitude/查看感謝日記.feature
+  - gratitude/編輯感謝條目.feature
+  - gratitude/刪除感謝條目.feature
+---
+flowchart TD
+    START([開始]) --> A1
+
+    A1["@登入使用者\n新增今日感謝條目（文字）"]
+    %% <- 原文「每天記錄自己感謝的事情，感覺有點像子彈筆記」
+    %% <- 使用者確認：每天可有多筆條目，條列式
+    A1 --> A2
+
+    A2["@系統\n儲存感謝條目（附上日期）"]
+    A2 --> A3
+
+    A3["@登入使用者\n瀏覽過去的感謝日記"]
+    %% <- 使用者確認：舊條目可隨時編輯
+    A3 --> END([結束])

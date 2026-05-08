@@ -1,0 +1,23 @@
+---
+title: 身份驗證流程
+actor: 登入使用者
+features:
+  - auth/Google登入.feature
+  - auth/更新個人資料.feature
+---
+flowchart TD
+    START([開始]) --> A1
+
+    A1["@登入使用者\n點擊 Sign in with Google"]
+    A1 --> A2
+
+    A2["@登入使用者\n完成 Google OAuth 授權"]
+    %% <- 原文「可以用 Sign in with Google 的方式進行登入」
+    A2 --> A3
+
+    A3["@系統\n識別/建立使用者帳號"]
+    %% <- CONFIRMED: 系統自動以 Google 身份建立帳號，使用者無需另行註冊
+    A3 --> A4
+
+    A4["@登入使用者\n進入系統主頁"]
+    A4 --> END([結束])
