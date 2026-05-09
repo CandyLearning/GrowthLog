@@ -1,0 +1,57 @@
+.composer {
+  background: var(--white); border-radius: var(--radius-lg);
+  border: 1.5px solid var(--border); padding: 22px 24px 20px;
+  box-shadow: var(--shadow-sm); margin-bottom: 24px;
+}
+.composerTitle {
+  font-family: 'Klee One', cursive;
+  font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 12px;
+}
+.composerTextarea {
+  width: 100%; min-height: 96px;
+  border: 1.5px solid var(--border); border-radius: var(--radius-md);
+  padding: 14px 16px; font-size: 15px;
+  font-family: 'Klee One', cursive;
+  color: var(--text); background: var(--peach-pale);
+  resize: vertical; line-height: 1.75; outline: none;
+  transition: border-color .15s;
+}
+.composerTextarea:focus { border-color: var(--peach); box-shadow: 0 0 0 3px rgba(232,192,160,.15); }
+.composerTextarea::placeholder { color: var(--text-muted); font-style: italic; }
+.composerFooter { display: flex; justify-content: flex-end; margin-top: 12px; }
+
+.dateGroup { margin-bottom: 22px; }
+.dateLabel {
+  font-size: 11px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 10px;
+}
+.dateLabel::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.entry {
+  background: var(--white); border-radius: var(--radius-md);
+  border: 1.5px solid var(--border); padding: 14px 18px;
+  margin-bottom: 8px; display: flex; align-items: flex-start; gap: 12px;
+  box-shadow: var(--shadow-sm); transition: box-shadow .15s;
+}
+.entry:hover { box-shadow: var(--shadow-md); }
+.entry:hover .entryActions { opacity: 1; }
+.entryBullet {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--peach-light); border: 2px solid var(--peach);
+  flex-shrink: 0; margin-top: 1px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: var(--peach);
+}
+.entryContent {
+  flex: 1; font-family: 'Klee One', cursive;
+  font-size: 15.5px; color: var(--text); line-height: 1.6;
+}
+.entryActions { display: flex; gap: 3px; opacity: 0; transition: opacity .15s; }
+
+.editTextarea {
+  min-height: 90px;
+  background: var(--peach-pale) !important;
+  font-family: 'Klee One', cursive !important;
+  font-size: 15px !important;
+}

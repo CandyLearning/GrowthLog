@@ -1,17 +1,31 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { getAuthToken } from '@/lib/auth'
 import { Sidebar } from '@/components/Sidebar'
 import { TopBar } from '@/components/TopBar'
 
-export default function ProtectedLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter()
+  const [ready, setReady] = useState(false)
+
+  useEffect(() => {
+    if (!getAuthToken()) {
+      router.replace('/login')
+    } else {
+      setReady(true)
+    }
+  }, [router])
+
+  if (!ready) return null
+
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
+    <div className="app-shell">
       <Sidebar />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <div className="main-content">
         <TopBar />
-        <main style={{ flex: 1, padding: '1rem' }}>{children}</main>
+        <main className="content-area">{children}</main>
       </div>
     </div>
   )

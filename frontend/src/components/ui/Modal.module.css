@@ -1,0 +1,40 @@
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(74,56,56,.25);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 8000;
+}
+.modal {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 28px 32px;
+  width: 480px; max-width: 92vw;
+  animation: modalIn .18s ease;
+}
+@keyframes modalIn {
+  from { opacity:0; transform: scale(.95) translateY(8px); }
+  to   { opacity:1; transform: scale(1) translateY(0); }
+}
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 22px;
+}
+.title {
+  font-family: 'Klee One', cursive;
+  font-size: 20px; font-weight: 600; color: var(--text);
+}
+.close {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--sakura-pale); color: var(--text-muted);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; cursor: pointer; transition: background .15s;
+  border: none;
+}
+.close:hover { background: var(--sakura-light); color: var(--text); }
+.body { }
+.footer {
+  display: flex; justify-content: flex-end; gap: 8px;
+  margin-top: 24px;
+}

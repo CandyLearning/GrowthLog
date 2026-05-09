@@ -3,15 +3,11 @@ import './globals.css'
 import { MSWProvider } from '@/components/MSWProvider'
 
 export const metadata: Metadata = {
-  title: 'frontend',
-  description: 'frontend — API-First Walking Skeleton',
+  title: 'GrowthLog',
+  description: '個人成長追蹤平台',
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="zh-TW">
       <body>

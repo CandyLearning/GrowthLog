@@ -1,0 +1,51 @@
+.goalHeader {
+  background: var(--white); border-radius: var(--radius-md);
+  border: 1.5px solid var(--border); box-shadow: var(--shadow-sm);
+  overflow: hidden; margin-bottom: 20px;
+}
+.goalHeaderAccent { height: 6px; background: linear-gradient(90deg, var(--mint), var(--sky-light)); }
+.goalHeaderBody   { padding: 22px 24px; }
+.goalHeaderTop    { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.goalTitle        { font-family: 'Klee One', cursive; font-size: 26px; font-weight: 600; color: var(--text); line-height: 1.2; }
+.goalDesc         { font-size: 14px; color: var(--text-mid); margin-top: 6px; }
+.dates            { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
+.dateItem         { display: flex; flex-direction: column; gap: 2px; }
+.dateLabel        { font-size: 10.5px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--text-muted); }
+.dateValue        { font-size: 14px; font-weight: 500; color: var(--text); }
+
+.recordsHeader    { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.recordsTitle     { font-family: 'Klee One', cursive; font-size: 19px; font-weight: 600; color: var(--text); }
+
+.recordCard {
+  background: var(--white); border-radius: var(--radius-md);
+  border: 1.5px solid var(--border); padding: 16px 20px;
+  margin-bottom: 10px; box-shadow: var(--shadow-sm); transition: box-shadow .15s;
+}
+.recordCard:hover { box-shadow: var(--shadow-md); }
+.recordTop        { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.recordTitle      { font-weight: 700; font-size: 14.5px; color: var(--text); }
+.recordDate       { font-size: 11.5px; color: var(--text-muted); white-space: nowrap; }
+.recordContent    { font-size: 13px; color: var(--text-mid); margin-top: 6px; line-height: 1.6; }
+
+.uploadZone {
+  border: 2px dashed var(--border-mid); border-radius: var(--radius-md);
+  background: var(--sakura-pale); transition: all .15s;
+}
+.uploadZone:hover { border-color: var(--sakura); background: var(--sakura-light); }
+.uploadLabel {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 22px 20px; cursor: pointer; gap: 4px;
+}
+.uploadIcon { font-size: 28px; }
+.uploadLabel span { font-size: 12.5px; color: var(--text-muted); }
+.uploadLabel small { font-size: 11px; color: var(--text-muted); }
+
+.petHint {
+  background: var(--mint-pale); border: 1px solid var(--mint-light);
+  border-radius: var(--radius-sm); padding: 10px 14px;
+  font-size: 12.5px; color: #3A7A5A; margin-bottom: 8px;
+}
+.formError {
+  margin-top: 8px; font-size: 13px; color: var(--sakura-dark);
+  background: var(--sakura-pale); padding: 8px 12px; border-radius: var(--radius-sm);
+}

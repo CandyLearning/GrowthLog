@@ -1,0 +1,32 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(274px, 1fr));
+  gap: 16px;
+}
+.card {
+  background: var(--white); border-radius: var(--radius-md);
+  border: 1.5px solid var(--border); padding: 0 0 16px 0;
+  box-shadow: var(--shadow-sm); transition: all .2s; overflow: hidden;
+}
+.card:hover { border-color: var(--sakura); box-shadow: var(--shadow-md); transform: translateY(-3px); }
+.accent { height: 5px; width: 100%; }
+.cardHeader {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 8px; padding: 16px 20px 8px;
+}
+.goalTitle {
+  font-family: 'Klee One', cursive;
+  font-size: 16px; font-weight: 600; color: var(--text); line-height: 1.3;
+}
+.goalDesc  { font-size: 12.5px; color: var(--text-muted); line-height: 1.55; padding: 0 20px 8px; }
+.goalDate  { font-size: 11.5px; color: var(--text-muted); padding: 0 20px; }
+.cardActions {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding: 12px 20px 0; margin-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.dateGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.formError {
+  margin-top: 8px; font-size: 13px; color: var(--sakura-dark);
+  background: var(--sakura-pale); padding: 8px 12px; border-radius: var(--radius-sm);
+}
