@@ -1,4 +1,9 @@
 import os
+
+# Windows Docker Desktop workaround: testcontainers parses base_url as
+# 'http+docker://localnpipe' and uses 'localnpipe' as the DB host.
+os.environ.setdefault("TC_HOST", "localhost")
+
 from types import SimpleNamespace
 
 from alembic import command
@@ -10,6 +15,7 @@ from testcontainers.postgres import PostgresContainer
 from app.core.deps import set_session_factory
 from app.main import create_app
 from app.models import Base
+from tests.features.helpers.jwt_helper import JwtHelper
 
 postgres_container = None
 engine = None
@@ -19,12 +25,10 @@ SessionLocal = None
 def before_all(context):
     global postgres_container, engine, SessionLocal
 
-    postgres_container = PostgresContainer("postgres:15")
+    postgres_container = PostgresContainer("postgres:15", driver="psycopg")
     postgres_container.start()
 
-    db_url = postgres_container.get_connection_url().replace(
-        "psycopg2", "psycopg"
-    )
+    db_url = postgres_container.get_connection_url()
     os.environ["DATABASE_URL"] = db_url
 
     engine = create_engine(db_url)
@@ -46,6 +50,8 @@ def before_scenario(context, scenario):
     context.memo = {}
 
     context.db_session = SessionLocal()
+    context.current_user_id = None
+    context.jwt_helper = JwtHelper()
 
     app = create_app()
     from starlette.testclient import TestClient

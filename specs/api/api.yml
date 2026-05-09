@@ -1,0 +1,626 @@
+openapi: 3.0.0
+info:
+  title: GrowthLog API
+  version: 1.0.0
+
+security:
+  - bearerAuth: []
+
+paths:
+
+  # ─────────────────────────────────────────
+  # Auth
+  # ─────────────────────────────────────────
+
+  /auth/google:
+    post:
+      operationId: googleOAuthCallback
+      summary: Google OAuth 登入
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoogleAuthRequest'
+      responses:
+        '200':
+          description: 登入成功，回傳 session token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+
+  # ─────────────────────────────────────────
+  # Users
+  # ─────────────────────────────────────────
+
+  /users/me:
+    get:
+      operationId: getMyProfile
+      summary: 查看個人資料
+      responses:
+        '200':
+          description: 回傳個人資料
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '401':
+          $ref: '#/components/responses/ErrorResponse'
+    patch:
+      operationId: updateMyProfile
+      summary: 更新個人資料
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserProfileRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/ErrorResponse'
+
+  # ─────────────────────────────────────────
+  # Learning Goals
+  # ─────────────────────────────────────────
+
+  /goals:
+    get:
+      operationId: listGoals
+      summary: 查看學習目標列表
+      responses:
+        '200':
+          description: 回傳學習目標列表（依截止日期升冪排序）
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalListResponse'
+    post:
+      operationId: createGoal
+      summary: 建立學習目標
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGoalRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /goals/{goalId}/status:
+    patch:
+      operationId: updateGoalStatus
+      summary: 更新學習目標狀態
+      parameters:
+        - name: goalId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateGoalStatusRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+        '422':
+          $ref: '#/components/responses/ErrorResponse'
+
+  # ─────────────────────────────────────────
+  # Learning Records
+  # ─────────────────────────────────────────
+
+  /goals/{goalId}/records:
+    get:
+      operationId: listRecords
+      summary: 查看學習紀錄
+      parameters:
+        - name: goalId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 回傳學習紀錄列表（依建立時間遞減排序）
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordListResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+    post:
+      operationId: createRecord
+      summary: 新增學習紀錄
+      parameters:
+        - name: goalId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data: # ASM: 圖片上傳支援，與 erm.dbml image_path 對應
+            schema:
+              $ref: '#/components/schemas/CreateRecordRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+
+  # ─────────────────────────────────────────
+  # Mood
+  # ─────────────────────────────────────────
+
+  /moods:
+    get:
+      operationId: listMoods
+      summary: 查看心情紀錄
+      responses:
+        '200':
+          description: 回傳心情紀錄列表（依 entry_date 遞減排序）
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MoodListResponse'
+    post:
+      operationId: createMood
+      summary: 記錄心情
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMoodRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+
+  # ─────────────────────────────────────────
+  # Gratitude
+  # ─────────────────────────────────────────
+
+  /gratitude:
+    get:
+      operationId: listGratitude
+      summary: 查看感謝日記
+      responses:
+        '200':
+          description: 回傳感謝條目列表（依 entry_date 遞減排序）
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GratitudeListResponse'
+    post:
+      operationId: createGratitude
+      summary: 新增感謝條目
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGratitudeRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /gratitude/{entryId}:
+    patch:
+      operationId: updateGratitude
+      summary: 編輯感謝條目
+      parameters:
+        - name: entryId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateGratitudeRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+    delete:
+      operationId: deleteGratitude
+      summary: 刪除感謝條目
+      parameters:
+        - name: entryId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+
+  # ─────────────────────────────────────────
+  # Pet
+  # ─────────────────────────────────────────
+
+  /pet:
+    get:
+      operationId: getPet
+      summary: 查看電子寵物狀態
+      responses:
+        '200':
+          description: 回傳寵物狀態
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+    post:
+      operationId: createPet
+      summary: 建立電子寵物
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePetRequest'
+      responses:
+        '200':
+          description: 建立成功，回傳初始寵物狀態
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '422':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /pet/feed:
+    post:
+      operationId: feedPet
+      summary: 餵食電子寵物
+      responses:
+        '200':
+          description: 餵食成功，回傳更新後狀態
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /pet/interact:
+    post:
+      operationId: interactWithPet
+      summary: 與電子寵物互動（撫摸）
+      responses:
+        '200':
+          description: 互動成功，回傳更新後狀態
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+
+# ─────────────────────────────────────────
+# Components
+# ─────────────────────────────────────────
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+  responses:
+    SuccessResponse:
+      description: 操作成功
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SuccessResult'
+    ErrorResponse:
+      description: 操作失敗
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+
+    # ── Shared ──────────────────────────────
+
+    Error:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+
+    SuccessResult:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+
+    # ── Auth ────────────────────────────────
+
+    GoogleAuthRequest:
+      type: object
+      required: [google_id, display_name]
+      properties:
+        google_id:
+          type: string
+        display_name:
+          type: string
+        avatar_url:
+          type: string
+
+    AuthResponse:
+      type: object
+      required: [token]
+      properties:
+        token:
+          type: string
+
+    # ── Users ───────────────────────────────
+
+    UserProfile:
+      type: object
+      required: [user_id, display_name]
+      properties:
+        user_id:
+          type: integer
+        display_name:
+          type: string
+        avatar_url:
+          type: string
+
+    UpdateUserProfileRequest:
+      type: object
+      properties:
+        display_name:
+          type: string
+        avatar_url:
+          type: string
+
+    # ── Goals ───────────────────────────────
+
+    Goal:
+      type: object
+      required: [goal_id, title, status]
+      properties:
+        goal_id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        status:
+          type: string
+          enum: [not_started, in_progress, completed, abandoned]
+
+    GoalListResponse:
+      type: object
+      required: [goals]
+      properties:
+        goals:
+          type: array
+          items:
+            $ref: '#/components/schemas/Goal'
+
+    CreateGoalRequest:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+
+    UpdateGoalStatusRequest:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [not_started, in_progress, completed, abandoned]
+
+    # ── Records ─────────────────────────────
+
+    LearningRecord:
+      type: object
+      required: [record_id, title, entry_date]
+      properties:
+        record_id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+        entry_date:
+          type: string
+          format: date
+
+    RecordListResponse:
+      type: object
+      required: [records]
+      properties:
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/LearningRecord'
+
+    CreateRecordRequest:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        image:
+          type: string
+          format: binary
+
+    # ── Mood ────────────────────────────────
+
+    MoodEntry:
+      type: object
+      required: [entry_id, mood_type, entry_date]
+      properties:
+        entry_id:
+          type: integer
+        mood_type:
+          type: string
+          enum: [depressed, sad, unhappy, neutral, good, happy]
+        note:
+          type: string
+        entry_date:
+          type: string
+          format: date
+
+    MoodListResponse:
+      type: object
+      required: [entries]
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/MoodEntry'
+
+    CreateMoodRequest:
+      type: object
+      required: [mood_type]
+      properties:
+        mood_type:
+          type: string
+          enum: [depressed, sad, unhappy, neutral, good, happy]
+        note:
+          type: string
+        tag_ids:
+          type: array
+          items:
+            type: integer
+
+    # ── Gratitude ───────────────────────────
+
+    GratitudeEntry:
+      type: object
+      required: [entry_id, content, entry_date]
+      properties:
+        entry_id:
+          type: integer
+        content:
+          type: string
+        entry_date:
+          type: string
+          format: date
+
+    GratitudeListResponse:
+      type: object
+      required: [entries]
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/GratitudeEntry'
+
+    CreateGratitudeRequest:
+      type: object
+      required: [content]
+      properties:
+        content:
+          type: string
+
+    UpdateGratitudeRequest:
+      type: object
+      required: [content]
+      properties:
+        content:
+          type: string
+
+    # ── Pet ─────────────────────────────────
+
+    Pet:
+      type: object
+      required: [species, pet_name, happiness, fullness, level]
+      properties:
+        species:
+          type: string
+          enum: [capybara, dog, cat, snake, rabbit, hamster, panda, penguin, fox, dragon]
+        pet_name:
+          type: string
+        happiness:
+          type: integer
+        fullness:
+          type: integer
+        level:
+          type: integer
+
+    PetResponse:
+      type: object
+      required: [pet]
+      properties:
+        pet:
+          $ref: '#/components/schemas/Pet'
+
+    CreatePetRequest:
+      type: object
+      required: [species, pet_name]
+      properties:
+        species:
+          type: string
+          enum: [capybara, dog, cat, snake, rabbit, hamster, panda, penguin, fox, dragon]
+        pet_name:
+          type: string
