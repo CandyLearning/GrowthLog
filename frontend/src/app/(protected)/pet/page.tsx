@@ -44,7 +44,7 @@ export default function PetPage() {
       const res = await getPet()
       setPet(res.pet)
     } catch (err) {
-      if (err instanceof ApiClientError && err.status === 404) {
+      if (err instanceof ApiClientError && (err.status === 404 || err.code === 'NOT_FOUND')) {
         setPet(null) // no pet yet
       } else {
         setToast('載入失敗')

@@ -52,6 +52,18 @@ def feed_pet(user_id: int, db: Session) -> Pet:
     return pet
 
 
+def interact_with_pet(user_id: int, db: Session) -> Pet:
+    repo = PetRepository(db)
+    pet = repo.find_by_user(user_id)
+    if pet is None:
+        raise ValueError("NOT_FOUND")
+    pet.happiness = min(100, pet.happiness + 5)
+    pet.updated_by = user_id
+    db.commit()
+    logger.info("Pet interacted: user_id=%s happiness=%s", user_id, pet.happiness)
+    return pet
+
+
 def update_pet_happiness(user_id: int, amount: int, db: Session) -> None:
     repo = PetRepository(db)
     pet = repo.find_by_user(user_id)
