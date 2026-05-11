@@ -1,5 +1,5 @@
 import { apiClient } from '@/lib/api/client'
-import type { PetResponse, CreatePetRequest } from '@/lib/types'
+import type { PetResponse, CreatePetRequest, RenamePetRequest } from '@/lib/types'
 
 export async function getPet(): Promise<PetResponse> {
   return apiClient<PetResponse>('/pet')
@@ -18,4 +18,11 @@ export async function feedPet(): Promise<PetResponse> {
 
 export async function interactWithPet(): Promise<PetResponse> {
   return apiClient<PetResponse>('/pet/interact', { method: 'POST' })
+}
+
+export async function renamePet(body: RenamePetRequest): Promise<PetResponse> {
+  return apiClient<PetResponse>('/pet', {
+    method: 'PATCH',
+    body: JSON.stringify(body),
+  })
 }

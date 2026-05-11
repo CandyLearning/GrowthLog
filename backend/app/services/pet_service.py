@@ -45,7 +45,7 @@ def feed_pet(user_id: int, db: Session) -> Pet:
     pet = repo.find_by_user(user_id)
     if pet is None:
         raise ValueError("NOT_FOUND")
-    pet.fullness = min(100, pet.fullness + 20)
+    pet.fullness = pet.fullness + 20
     pet.updated_by = user_id
     db.commit()
     logger.info("Pet fed: user_id=%s fullness=%s", user_id, pet.fullness)
@@ -57,7 +57,7 @@ def interact_with_pet(user_id: int, db: Session) -> Pet:
     pet = repo.find_by_user(user_id)
     if pet is None:
         raise ValueError("NOT_FOUND")
-    pet.happiness = min(100, pet.happiness + 5)
+    pet.happiness = pet.happiness + 5
     pet.updated_by = user_id
     db.commit()
     logger.info("Pet interacted: user_id=%s happiness=%s", user_id, pet.happiness)
@@ -68,6 +68,20 @@ def update_pet_happiness(user_id: int, amount: int, db: Session) -> None:
     repo = PetRepository(db)
     pet = repo.find_by_user(user_id)
     if pet is not None:
-        pet.happiness = min(100, pet.happiness + amount)
+        pet.happiness = pet.happiness + amount
         pet.updated_by = user_id
         db.commit()
+
+
+def rename_pet(user_id: int, pet_name: str, db: Session) -> Pet:
+    if not pet_name or not pet_name.strip():
+        raise ValueError("MISSING_REQUIRED_FIELD")
+    repo = PetRepository(db)
+    pet = repo.find_by_user(user_id)
+    if pet is None:
+        raise ValueError("NOT_FOUND")
+    pet.pet_name = pet_name.strip()
+    pet.updated_by = user_id
+    db.commit()
+    logger.info("Pet renamed: user_id=%s pet_name=%s", user_id, pet_name)
+    return pet

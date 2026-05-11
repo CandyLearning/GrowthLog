@@ -80,6 +80,32 @@
 .bonusRow:last-child { border-bottom: none; }
 .bonusVal { font-weight: 700; color: var(--sakura-dark); }
 
+/* Rename */
+.displayNameInner { display: inline-flex; align-items: center; gap: 6px; }
+.renameBtn {
+  background: none; border: none; cursor: pointer; font-size: 14px;
+  padding: 2px 4px; border-radius: 4px; opacity: 0.45; transition: opacity .15s;
+}
+.renameBtn:hover { opacity: 1; }
+.renameRow { display: flex; align-items: center; gap: 6px; justify-content: center; }
+.renameInput {
+  padding: 4px 12px; border-radius: var(--radius-pill);
+  border: 1.5px solid var(--sakura); font-size: 20px;
+  font-family: 'Klee One', cursive; font-weight: 600;
+  color: var(--text); text-align: center; width: 150px;
+  background: rgba(255,255,255,.9); outline: none;
+}
+.renameInput:focus { border-color: var(--sakura-dark); }
+.renameConfirm, .renameCancel {
+  border: 1.5px solid var(--border-mid); border-radius: var(--radius-sm);
+  cursor: pointer; font-size: 15px; padding: 3px 9px; transition: all .15s;
+  background: rgba(255,255,255,.8);
+}
+.renameConfirm { color: var(--sakura-dark); border-color: var(--sakura); }
+.renameConfirm:hover { background: var(--sakura-pale); }
+.renameCancel { color: var(--text-muted); }
+.renameCancel:hover { background: var(--lav-pale); }
+
 /* Create Pet */
 .createCard {
   background: linear-gradient(160deg, var(--sakura-light) 0%, var(--lav-light) 60%, var(--mint-light) 100%);

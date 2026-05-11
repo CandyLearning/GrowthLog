@@ -24,9 +24,11 @@ export function Sidebar() {
   const [pet, setPet] = useState<Pet | null>(null)
 
   useEffect(() => {
-    getPet()
-      .then((res) => setPet(res.pet))
-      .catch(() => setPet(null))
+    const refresh = () =>
+      getPet().then((res) => setPet(res.pet)).catch(() => setPet(null))
+    refresh()
+    window.addEventListener('pet-updated', refresh)
+    return () => window.removeEventListener('pet-updated', refresh)
   }, [])
 
   return (
@@ -65,13 +67,13 @@ export function Sidebar() {
                 <div className={styles.petBarRow}>
                   <span className={styles.petBarIcon}>💛</span>
                   <div className={styles.petBarTrack}>
-                    <div className={`${styles.petBarFill} ${styles.fillHappy}`} style={{ width: `${pet.happiness}%` }} />
+                    <div className={`${styles.petBarFill} ${styles.fillHappy}`} style={{ width: `${Math.min(100, pet.happiness)}%` }} />
                   </div>
                 </div>
                 <div className={styles.petBarRow}>
                   <span className={styles.petBarIcon}>🍖</span>
                   <div className={styles.petBarTrack}>
-                    <div className={`${styles.petBarFill} ${styles.fillFullness}`} style={{ width: `${pet.fullness}%` }} />
+                    <div className={`${styles.petBarFill} ${styles.fillFullness}`} style={{ width: `${Math.min(100, pet.fullness)}%` }} />
                   </div>
                 </div>
               </div>

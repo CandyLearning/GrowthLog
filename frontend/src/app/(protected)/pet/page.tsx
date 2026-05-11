@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { getPet, createPet, feedPet, interactWithPet } from '@/lib/api/pet'
+import { getPet, createPet, feedPet, interactWithPet, renamePet } from '@/lib/api/pet'
 import { ApiClientError } from '@/lib/api/client'
 import { Toast } from '@/components/Toast'
 import type { Pet, PetSpecies } from '@/lib/types/pet.schema'
@@ -32,6 +32,8 @@ export default function PetPage() {
   const [pet, setPet] = useState<Pet | null | 'loading'>('loading')
   const [toast, setToast] = useState<string | null>(null)
   const [actionLoading, setActionLoading] = useState(false)
+  const [renaming, setRenaming] = useState(false)
+  const [newName, setNewName] = useState('')
 
   // Create pet form
   const [selectedSpecies, setSelectedSpecies] = useState<PetSpecies>('capybara')
@@ -55,11 +57,16 @@ export default function PetPage() {
 
   useEffect(() => { refresh() }, [refresh])
 
+  function notifyPetUpdated() {
+    window.dispatchEvent(new CustomEvent('pet-updated'))
+  }
+
   async function handleFeed() {
     setActionLoading(true)
     try {
       const res = await feedPet()
       setPet(res.pet)
+      notifyPetUpdated()
       setToast('🍖 餵食成功！飽食度增加了～')
     } catch (err) {
       setToast(err instanceof ApiClientError ? err.message : '餵食失敗')
@@ -73,9 +80,27 @@ export default function PetPage() {
     try {
       const res = await interactWithPet()
       setPet(res.pet)
+      notifyPetUpdated()
       setToast('🤚 撫摸成功！小傢伙很開心！')
     } catch (err) {
       setToast(err instanceof ApiClientError ? err.message : '互動失敗')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  async function handleRename(e: React.FormEvent) {
+    e.preventDefault()
+    if (!newName.trim()) return
+    setActionLoading(true)
+    try {
+      const res = await renamePet({ pet_name: newName.trim() })
+      setPet(res.pet)
+      notifyPetUpdated()
+      setRenaming(false)
+      setToast(`✏️ 已改名為 ${newName.trim()}！`)
+    } catch (err) {
+      setToast(err instanceof ApiClientError ? err.message : '改名失敗')
     } finally {
       setActionLoading(false)
     }
@@ -149,7 +174,32 @@ export default function PetPage() {
       <div className={styles.layout}>
         {/* Pet Display */}
         <div className={styles.display}>
-          <div className={styles.displayName}>{pet.pet_name}</div>
+          <div className={styles.displayName}>
+            {renaming ? (
+              <form onSubmit={handleRename} className={styles.renameRow}>
+                <input
+                  className={styles.renameInput}
+                  value={newName}
+                  onChange={e => setNewName(e.target.value)}
+                  autoFocus
+                  maxLength={20}
+                  data-testid="rename-input"
+                />
+                <button type="submit" className={styles.renameConfirm} disabled={actionLoading} data-testid="rename-confirm-btn">✓</button>
+                <button type="button" className={styles.renameCancel} onClick={() => setRenaming(false)}>✕</button>
+              </form>
+            ) : (
+              <span className={styles.displayNameInner}>
+                {pet.pet_name}
+                <button
+                  className={styles.renameBtn}
+                  onClick={() => { setNewName(pet.pet_name); setRenaming(true) }}
+                  data-testid="rename-btn"
+                  title="改名"
+                >✏️</button>
+              </span>
+            )}
+          </div>
           <div className={styles.displaySpecies}>
             {SPECIES_LABEL[pet.species]} · Lv.{pet.level}
           </div>
@@ -161,14 +211,14 @@ export default function PetPage() {
             <div className={styles.statRow}>
               <span className={styles.statIcon}>💛</span>
               <div className={styles.statTrack}>
-                <div className={`${styles.statFill} ${styles.fillHappy}`} style={{ width: `${pet.happiness}%` }} />
+                <div className={`${styles.statFill} ${styles.fillHappy}`} style={{ width: `${Math.min(100, pet.happiness)}%` }} />
               </div>
               <span className={styles.statNum}>{pet.happiness}</span>
             </div>
             <div className={styles.statRow}>
               <span className={styles.statIcon}>🍖</span>
               <div className={styles.statTrack}>
-                <div className={`${styles.statFill} ${styles.fillFullness}`} style={{ width: `${pet.fullness}%` }} />
+                <div className={`${styles.statFill} ${styles.fillFullness}`} style={{ width: `${Math.min(100, pet.fullness)}%` }} />
               </div>
               <span className={styles.statNum}>{pet.fullness}</span>
             </div>
@@ -182,7 +232,7 @@ export default function PetPage() {
             <div className={`${styles.actionIcon} ${styles.iconFeed}`}>🍖</div>
             <div>
               <div className={styles.actionName}>餵食</div>
-              <div className={styles.actionSub}>飽食度 +20（上限 100）</div>
+              <div className={styles.actionSub}>飽食度 +20</div>
             </div>
           </button>
           <button className={styles.actionRow} onClick={handleInteract} disabled={actionLoading} data-testid="interact-btn">

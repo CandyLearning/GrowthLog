@@ -22,7 +22,12 @@ export const CreatePetRequestSchema = z.object({
   pet_name: z.string(),
 })
 
+export const RenamePetRequestSchema = z.object({
+  pet_name: z.string(),
+})
+
 export type PetSpecies = z.infer<typeof PetSpeciesSchema>
 export type Pet = z.infer<typeof PetSchema>
 export type PetResponse = z.infer<typeof PetResponseSchema>
 export type CreatePetRequest = z.infer<typeof CreatePetRequestSchema>
+export type RenamePetRequest = z.infer<typeof RenamePetRequestSchema>

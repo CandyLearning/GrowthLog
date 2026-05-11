@@ -3,8 +3,8 @@ from typing import Optional
 from fastapi import APIRouter, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
-from app.schemas.pet import CreatePetRequest
-from app.services.pet_service import create_pet, get_pet, feed_pet, interact_with_pet
+from app.schemas.pet import CreatePetRequest, RenamePetRequest
+from app.services.pet_service import create_pet, get_pet, feed_pet, interact_with_pet, rename_pet
 from app.core.security import decode_token
 from app.core.deps import get_db
 
@@ -81,6 +81,34 @@ def feed_pet_endpoint(
 
     try:
         pet = feed_pet(user_id, db)
+    except ValueError as e:
+        return {"success": False, "error": {"violation_type": str(e)}}
+
+    return {
+        "success": True,
+        "pet": {
+            "species": pet.species,
+            "pet_name": pet.pet_name,
+            "happiness": pet.happiness,
+            "fullness": pet.fullness,
+            "level": pet.level,
+        },
+    }
+
+
+@router.patch("")
+def rename_pet_endpoint(
+    body: RenamePetRequest,
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(_bearer),
+    db: Session = Depends(get_db),
+):
+    if credentials is None:
+        return {"success": False, "error": {"violation_type": "UNAUTHORIZED"}}
+    payload = decode_token(credentials.credentials)
+    user_id = payload["user_id"]
+
+    try:
+        pet = rename_pet(user_id, body.pet_name, db)
     except ValueError as e:
         return {"success": False, "error": {"violation_type": str(e)}}
 

@@ -10,7 +10,7 @@ Feature: 與電子寵物互動
       | 1       | 小明         |
     And 以 $使用者.user_id 身份發出請求
 
-  Rule: 後置 - 使用者可以每日餵食寵物，飽食度增加 20（上限 100）
+  Rule: 後置 - 使用者可以每日餵食寵物，飽食度增加 20
     Example: 餵食成功，飽食度加 20
       Given 系統中有以下電子寵物：
         | pet_id | user_id | species  | pet_name | happiness | fullness | level |
@@ -21,7 +21,7 @@ Feature: 與電子寵物互動
         | happiness | fullness | level |
         | 80        | 80       | 1     |
 
-    Example: 飽食度接近上限時餵食，飽食度 cap 在 100
+    Example: 飽食度超過 100 時正確累積不封頂
       Given 系統中有以下電子寵物：
         | pet_id | user_id | species | pet_name | happiness | fullness | level |
         | 1      | 1       | dog     | 小狗     | 90        | 90       | 1     |
@@ -29,7 +29,7 @@ Feature: 與電子寵物互動
       Then 操作成功
       And 系統中電子寵物的狀態應為：
         | happiness | fullness | level |
-        | 90        | 100      | 1     |
+        | 90        | 110      | 1     |
 
   Rule: 後置 - 完成學習紀錄後寵物快樂值增加 10
     Example: 新增學習紀錄觸發寵物快樂值 +10

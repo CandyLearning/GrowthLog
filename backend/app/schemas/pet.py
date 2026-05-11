@@ -7,6 +7,10 @@ class CreatePetRequest(BaseModel):
     pet_name: Optional[str] = None
 
 
+class RenamePetRequest(BaseModel):
+    pet_name: str
+
+
 class PetStatusResponse(BaseModel):
     species: str
     pet_name: str

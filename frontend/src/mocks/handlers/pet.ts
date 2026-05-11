@@ -10,10 +10,6 @@ const VALID_SPECIES: PetSpecies[] = [
 // null means user has no pet yet
 let petState: Pet | null = { ...mockPet }
 
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max)
-}
-
 export const petHandlers = [
   // GET /api/v1/pet — getPet
   // 404: user has no pet
@@ -65,6 +61,27 @@ export const petHandlers = [
     return HttpResponse.json({ success: true, data: { pet: petState } })
   }),
 
+  // PATCH /api/v1/pet — renamePet
+  // 400: missing pet_name
+  // 404: user has no pet
+  http.patch('/api/v1/pet', async ({ request }) => {
+    const body = await request.json() as { pet_name?: string }
+    if (!petState) {
+      return HttpResponse.json(
+        { success: false, error: { code: 'NOT_FOUND', message: '尚未建立電子寵物' } },
+        { status: 404 }
+      )
+    }
+    if (!body.pet_name || body.pet_name.trim() === '') {
+      return HttpResponse.json(
+        { success: false, error: { code: 'MISSING_REQUIRED_FIELD', message: '寵物名稱為必填' } },
+        { status: 400 }
+      )
+    }
+    petState = { ...petState, pet_name: body.pet_name.trim() }
+    return HttpResponse.json({ success: true, data: { pet: petState } })
+  }),
+
   // POST /api/v1/pet/feed — feedPet
   // 404: user has no pet
   http.post('/api/v1/pet/feed', () => {
@@ -74,7 +91,7 @@ export const petHandlers = [
         { status: 404 }
       )
     }
-    petState = { ...petState, fullness: clamp(petState.fullness + 20, 0, 100) }
+    petState = { ...petState, fullness: petState.fullness + 20 }
     return HttpResponse.json({ success: true, data: { pet: petState } })
   }),
 
@@ -87,7 +104,7 @@ export const petHandlers = [
         { status: 404 }
       )
     }
-    petState = { ...petState, happiness: clamp(petState.happiness + 5, 0, 100) }
+    petState = { ...petState, happiness: petState.happiness + 5 }
     return HttpResponse.json({ success: true, data: { pet: petState } })
   }),
 ]
@@ -97,5 +114,5 @@ export function applyPetBonus(type: 'record' | 'gratitude' | 'mood') {
   if (!petState) return
   const bonuses = { record: { happiness: 10, level_exp: 15 }, gratitude: { happiness: 8, level_exp: 10 }, mood: { happiness: 3, level_exp: 3 } }
   const bonus = bonuses[type]
-  petState = { ...petState, happiness: clamp(petState.happiness + bonus.happiness, 0, 100) }
+  petState = { ...petState, happiness: petState.happiness + bonus.happiness }
 }
