@@ -4,10 +4,24 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useGoogleLogin } from '@react-oauth/google'
 import { googleOAuthCallback } from '@/lib/api/auth'
+import { getPet } from '@/lib/api/pet'
+import { ApiClientError } from '@/lib/api/client'
 import { setAuthToken } from '@/lib/auth'
 import styles from './page.module.css'
 
 const isMock = process.env.NEXT_PUBLIC_MOCK_API === 'true'
+
+async function resolvePostLoginRoute(): Promise<'/goals' | '/pet'> {
+  try {
+    await getPet()
+    return '/goals'
+  } catch (err) {
+    if (err instanceof ApiClientError && (err.status === 404 || err.code === 'NOT_FOUND')) {
+      return '/pet'
+    }
+    return '/goals'
+  }
+}
 
 export default function LoginPage() {
   const router = useRouter()
@@ -27,7 +41,7 @@ export default function LoginPage() {
           avatar_url: profile.picture ?? null,
         })
         setAuthToken(res.token)
-        router.replace('/goals')
+        router.replace(await resolvePostLoginRoute())
       } catch {
         setError('登入失敗，請重試')
         setLoading(false)
@@ -50,7 +64,7 @@ export default function LoginPage() {
           avatar_url: 'https://lh3.google.com/photo1',
         })
         setAuthToken(res.token)
-        router.replace('/goals')
+        router.replace(await resolvePostLoginRoute())
       } catch {
         setError('登入失敗，請重試')
         setLoading(false)
