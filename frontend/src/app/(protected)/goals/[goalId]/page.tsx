@@ -70,6 +70,12 @@ export default function GoalDetailPage() {
     }
   }
 
+  function handleClose() {
+    setAddOpen(false)
+    setForm({ title: '', content: '', image: null })
+    setFormError(null)
+  }
+
   async function handleAddRecord(e: React.FormEvent) {
     e.preventDefault()
     if (!form.title.trim()) { setFormError('請填寫紀錄標題'); return }
@@ -183,10 +189,10 @@ export default function GoalDetailPage() {
       {addOpen && (
         <Modal
           title="新增學習紀錄 📝"
-          onClose={() => setAddOpen(false)}
+          onClose={handleClose}
           footer={
             <>
-              <button className="btn btn-secondary" onClick={() => setAddOpen(false)}>取消</button>
+              <button className="btn btn-secondary" onClick={handleClose}>取消</button>
               <button className="btn btn-mint" form="add-record-form" type="submit" disabled={submitting}
                 style={{ color: '#fff' }}>
                 {submitting ? '新增中…' : '新增紀錄 🌱'}
