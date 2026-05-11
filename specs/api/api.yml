@@ -488,6 +488,9 @@ components:
           type: string
         content:
           type: string
+        image_url:
+          type: string
+          format: uri
         entry_date:
           type: string
           format: date

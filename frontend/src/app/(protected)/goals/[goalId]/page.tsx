@@ -169,6 +169,13 @@ export default function GoalDetailPage() {
               <span className={styles.recordDate}>{record.entry_date}</span>
             </div>
             {record.content && <p className={styles.recordContent}>{record.content}</p>}
+            {record.image_url && (
+              <img
+                src={record.image_url}
+                alt={record.title}
+                className={styles.recordImage}
+              />
+            )}
           </div>
         ))
       )}
@@ -204,13 +211,17 @@ export default function GoalDetailPage() {
             <div className="form-group">
               <label className="form-label">附圖（選填）</label>
               <div className={styles.uploadZone}>
-                <input type="file" accept="image/*" style={{ display: 'none' }} id="record-img"
-                  onChange={e => setForm(f => ({ ...f, image: e.target.files?.[0] ?? null }))} />
-                <label htmlFor="record-img" className={styles.uploadLabel}>
+                <div className={styles.uploadLabel}>
                   <span className={styles.uploadIcon}>📸</span>
                   <span>{form.image ? form.image.name : '點擊上傳或拖放圖片'}</span>
                   <small>支援 JPG、PNG、GIF</small>
-                </label>
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className={styles.uploadInput}
+                  onChange={e => setForm(f => ({ ...f, image: e.target.files?.[0] ?? null }))}
+                />
               </div>
             </div>
             <div className={styles.petHint}>

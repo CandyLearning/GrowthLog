@@ -38,3 +38,11 @@ Feature: 新增學習紀錄
         | title           | content                |
         | 今日學習        |                        |
         | 今日學習 Python | 學了 list comprehension |
+
+  Rule: 後置 - 新增學習紀錄時可選擇性上傳附圖
+    Example: 附圖上傳後 image_url 應出現在紀錄中
+      When 使用者在學習目標 1 下新增學習紀錄（含附圖）：
+        | title    | image_filename |
+        | 有圖紀錄 | screenshot.png |
+      Then 操作成功
+      And 查詢學習目標 1 的紀錄時，最新一筆的 image_url 不為空

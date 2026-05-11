@@ -55,12 +55,17 @@ export const recordHandlers = [
 
     let title: string | null = null
     let content: string | undefined
+    let image_url: string | undefined
 
     const contentType = request.headers.get('Content-Type') ?? ''
     if (contentType.includes('multipart/form-data')) {
       const formData = await request.formData()
       title = formData.get('title') as string | null
       content = (formData.get('content') as string | null) ?? undefined
+      const imageFile = formData.get('image') as File | null
+      if (imageFile && imageFile.size > 0) {
+        image_url = URL.createObjectURL(imageFile)
+      }
     } else {
       const body = await request.json() as { title?: string; content?: string }
       title = body.title ?? null
@@ -78,6 +83,7 @@ export const recordHandlers = [
       record_id: nextRecordId++,
       title,
       content,
+      image_url,
       entry_date: today(),
     }
     const existing = recordsByGoal.get(goalId) ?? []

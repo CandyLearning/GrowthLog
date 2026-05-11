@@ -42,6 +42,15 @@ Feature: 查看學習紀錄
         | 2         | 紀錄二 | list 操作 | 2026-05-08 |
         | 1         | 紀錄一 | 基礎語法  | 2026-05-07 |
 
+    Example: 有附圖的紀錄回傳時應包含 image_url
+      Given 系統中有以下學習紀錄：
+        | record_id | goal_id | user_id | title    | image_path              | entry_date |
+        | 3         | 1       | 1       | 有圖紀錄 | /uploads/records/a.jpg  | 2026-05-09 |
+      When 使用者查詢學習目標 1 下的學習紀錄
+      Then 查詢結果應包含以下學習紀錄：
+        | record_id | title    | image_url               |
+        | 3         | 有圖紀錄 | /uploads/records/a.jpg  |
+
     Example: 無紀錄時回傳空列表
       When 使用者查詢學習目標 1 下的學習紀錄
       Then 查詢結果應為空

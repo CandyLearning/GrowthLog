@@ -24,3 +24,6 @@ httpx>=0.26.0
 
 # Auth
 PyJWT>=2.8.0
+
+# File uploads
+python-multipart>=0.0.9

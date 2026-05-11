@@ -1,6 +1,9 @@
 import logging
+import os
+import shutil
+import uuid
 from typing import Optional
-from fastapi import APIRouter, Depends, Form
+from fastapi import APIRouter, Depends, File, Form, UploadFile
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from app.services.record_service import create_record, list_records
@@ -12,12 +15,15 @@ router = APIRouter(tags=["records"])
 
 _bearer = HTTPBearer(auto_error=False)
 
+RECORD_UPLOAD_DIR = "uploads/records"
+
 
 @router.post("/goals/{goal_id}/records")
 def create_record_endpoint(
     goal_id: int,
     title: Optional[str] = Form(None),
     content: Optional[str] = Form(None),
+    image: Optional[UploadFile] = File(None),
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(_bearer),
     db: Session = Depends(get_db),
 ):
@@ -26,8 +32,18 @@ def create_record_endpoint(
     payload = decode_token(credentials.credentials)
     user_id = payload["user_id"]
 
+    image_url = None
+    if image and image.filename:
+        os.makedirs(RECORD_UPLOAD_DIR, exist_ok=True)
+        ext = os.path.splitext(image.filename)[1]
+        filename = f"{uuid.uuid4()}{ext}"
+        save_path = os.path.join(RECORD_UPLOAD_DIR, filename)
+        with open(save_path, "wb") as f:
+            shutil.copyfileobj(image.file, f)
+        image_url = f"/uploads/records/{filename}"
+
     try:
-        create_record(user_id, goal_id, title, content, db)
+        create_record(user_id, goal_id, title, content, image_url, db)
     except ValueError as e:
         return {"success": False, "error": {"violation_type": str(e)}}
 
@@ -51,6 +67,7 @@ def list_records_endpoint(
                 "record_id": r.id,
                 "title": r.title,
                 "content": r.content,
+                "image_url": r.image_path,
                 "entry_date": r.entry_date.isoformat() if r.entry_date else None,
             }
             for r in records

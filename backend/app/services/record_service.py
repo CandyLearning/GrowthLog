@@ -14,6 +14,7 @@ def create_record(
     goal_id: int,
     title: Optional[str],
     content: Optional[str],
+    image_path: Optional[str],
     db: Session,
 ) -> None:
     if not title:
@@ -29,6 +30,7 @@ def create_record(
         user_id=user_id,
         title=title,
         content=content or None,
+        image_path=image_path,
         entry_date=date.today(),
         created_by=0,
     )
