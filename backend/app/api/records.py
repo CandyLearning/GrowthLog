@@ -3,10 +3,11 @@ import os
 import shutil
 import uuid
 from typing import Optional
-from fastapi import APIRouter, Depends, File, Form, UploadFile
+from fastapi import APIRouter, Depends, File, Form, UploadFile, Body
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
-from app.services.record_service import create_record, list_records
+from app.services.record_service import create_record, list_records, update_record, delete_record
+from app.schemas.records import UpdateRecordRequest
 from app.core.security import decode_token
 from app.core.deps import get_db
 
@@ -73,3 +74,44 @@ def list_records_endpoint(
             for r in records
         ]
     }
+
+
+@router.patch("/goals/{goal_id}/records/{record_id}")
+def update_record_endpoint(
+    goal_id: int,
+    record_id: int,
+    body: UpdateRecordRequest,
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(_bearer),
+    db: Session = Depends(get_db),
+):
+    if credentials is None:
+        return {"success": False, "error": {"violation_type": "UNAUTHORIZED"}}
+    payload = decode_token(credentials.credentials)
+    user_id = payload["user_id"]
+
+    try:
+        update_record(user_id, goal_id, record_id, body.title, body.content, db)
+    except ValueError as e:
+        return {"success": False, "error": {"violation_type": str(e)}}
+
+    return {"success": True}
+
+
+@router.delete("/goals/{goal_id}/records/{record_id}")
+def delete_record_endpoint(
+    goal_id: int,
+    record_id: int,
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(_bearer),
+    db: Session = Depends(get_db),
+):
+    if credentials is None:
+        return {"success": False, "error": {"violation_type": "UNAUTHORIZED"}}
+    payload = decode_token(credentials.credentials)
+    user_id = payload["user_id"]
+
+    try:
+        delete_record(user_id, goal_id, record_id, db)
+    except ValueError as e:
+        return {"success": False, "error": {"violation_type": str(e)}}
+
+    return {"success": True}

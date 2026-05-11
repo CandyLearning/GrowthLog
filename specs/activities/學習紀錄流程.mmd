@@ -4,6 +4,8 @@ actor: 登入使用者
 features:
   - learning-record/新增學習紀錄.feature
   - learning-record/查看學習紀錄.feature
+  - learning-record/編輯學習紀錄.feature
+  - learning-record/刪除學習紀錄.feature
 ---
 flowchart TD
     START([開始]) --> A1
@@ -24,4 +26,14 @@ flowchart TD
 
     A4["@登入使用者\n查看目標下的學習紀錄列表"]
     %% <- 原文「一個目標可以對應多個學習紀錄」
-    A4 --> END([結束])
+    A4 --> A5
+
+    A5{"要對紀錄執行操作？"}
+    A5 -- 編輯 --> A6["@登入使用者\n修改紀錄標題或內容\n（不含圖片）"]
+    A5 -- 刪除 --> A7["@登入使用者\n刪除該學習紀錄"]
+    A5 -- 否 --> END([結束])
+
+    A6 --> A8["@系統\n更新學習紀錄（title / content）"]
+    A8 --> END
+    A7 --> A9["@系統\n移除學習紀錄"]
+    A9 --> END

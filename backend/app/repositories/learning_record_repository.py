@@ -29,3 +29,7 @@ class LearningRecordRepository:
             .order_by(LearningRecord.entry_date.desc())
             .all()
         )
+
+    def delete(self, record: LearningRecord) -> None:
+        self.session.delete(record)
+        self.session.commit()

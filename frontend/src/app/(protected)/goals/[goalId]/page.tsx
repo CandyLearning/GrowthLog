@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { listGoals, updateGoalStatus } from '@/lib/api/goal'
-import { listRecords, createRecord } from '@/lib/api/record'
+import { listRecords, createRecord, updateRecord, deleteRecord } from '@/lib/api/record'
 import { ApiClientError } from '@/lib/api/client'
 import { Toast } from '@/components/Toast'
 import { Modal } from '@/components/ui/Modal'
@@ -39,6 +39,10 @@ export default function GoalDetailPage() {
   const [form, setForm] = useState({ title: '', content: '', image: null as File | null })
   const [formError, setFormError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+
+  const [editRecord, setEditRecord] = useState<LearningRecord | null>(null)
+  const [editForm, setEditForm] = useState({ title: '', content: '' })
+  const [editSubmitting, setEditSubmitting] = useState(false)
 
   const refresh = useCallback(async () => {
     try {
@@ -94,6 +98,35 @@ export default function GoalDetailPage() {
       setFormError(err instanceof ApiClientError ? err.message : '新增失敗，請重試')
     } finally {
       setSubmitting(false)
+    }
+  }
+
+  async function handleEditRecord(e: React.FormEvent) {
+    e.preventDefault()
+    if (!editRecord || !editForm.title.trim()) return
+    setEditSubmitting(true)
+    try {
+      await updateRecord(goalId, editRecord.record_id, {
+        title: editForm.title.trim(),
+        content: editForm.content.trim() || undefined,
+      })
+      setToast('學習紀錄已更新 ✓')
+      setEditRecord(null)
+      refresh()
+    } catch (err) {
+      setToast(err instanceof ApiClientError ? err.message : '更新失敗')
+    } finally {
+      setEditSubmitting(false)
+    }
+  }
+
+  async function handleDeleteRecord(recordId: number) {
+    try {
+      await deleteRecord(goalId, recordId)
+      setRecords(prev => prev.filter(r => r.record_id !== recordId))
+      setToast('已刪除 ✓')
+    } catch (err) {
+      setToast(err instanceof ApiClientError ? err.message : '刪除失敗')
     }
   }
 
@@ -172,7 +205,17 @@ export default function GoalDetailPage() {
           <div key={record.record_id} className={styles.recordCard} data-testid={`record-${record.record_id}`}>
             <div className={styles.recordTop}>
               <div className={styles.recordTitle}>{record.title}</div>
-              <span className={styles.recordDate}>{record.entry_date}</span>
+              <div className={styles.recordTopRight}>
+                <span className={styles.recordDate}>{record.entry_date}</span>
+                <div className={styles.recordActions}>
+                  <button className="btn btn-ghost btn-icon"
+                    onClick={() => { setEditRecord(record); setEditForm({ title: record.title, content: record.content ?? '' }) }}
+                    aria-label="編輯">✏️</button>
+                  <button className="btn btn-ghost btn-icon"
+                    onClick={() => handleDeleteRecord(record.record_id)}
+                    aria-label="刪除">🗑️</button>
+                </div>
+              </div>
             </div>
             {record.content && <p className={styles.recordContent}>{record.content}</p>}
             {record.image_url && (
@@ -234,6 +277,37 @@ export default function GoalDetailPage() {
               🐾 新增紀錄後，小玉的快樂值將增加 +10！
             </div>
             {formError && <p className={styles.formError}>{formError}</p>}
+          </form>
+        </Modal>
+      )}
+
+      {editRecord && (
+        <Modal
+          title="編輯學習紀錄 📝"
+          onClose={() => setEditRecord(null)}
+          footer={
+            <>
+              <button className="btn btn-secondary" onClick={() => setEditRecord(null)}>取消</button>
+              <button className="btn btn-mint" form="edit-record-form" type="submit" disabled={editSubmitting}
+                style={{ color: '#fff' }}>
+                {editSubmitting ? '儲存中…' : '儲存'}
+              </button>
+            </>
+          }
+        >
+          <form id="edit-record-form" onSubmit={handleEditRecord}>
+            <div className="form-group">
+              <label className="form-label">紀錄標題 <span style={{ color: 'var(--sakura-mid)' }}>*</span></label>
+              <input className="form-input" type="text" value={editForm.title}
+                onChange={e => setEditForm(f => ({ ...f, title: e.target.value }))}
+                required />
+            </div>
+            <div className="form-group">
+              <label className="form-label">學習內容（選填）</label>
+              <textarea className="form-input" style={{ minHeight: 90 }}
+                value={editForm.content}
+                onChange={e => setEditForm(f => ({ ...f, content: e.target.value }))} />
+            </div>
           </form>
         </Modal>
       )}

@@ -4,6 +4,8 @@ actor: 登入使用者
 features:
   - mood/記錄心情.feature
   - mood/查看心情紀錄.feature
+  - mood/編輯心情紀錄.feature
+  - mood/刪除心情紀錄.feature
 ---
 flowchart TD
     START([開始]) --> A1
@@ -18,4 +20,14 @@ flowchart TD
 
     A3["@登入使用者\n查看過去的心情紀錄"]
     %% 心情記錄的視圖形式（日曆/時間軸）由 Phase 06 Frontend 定義
-    A3 --> END([結束])
+    A3 --> A4
+
+    A4{"要對紀錄執行操作？"}
+    A4 -- 編輯 --> A5["@登入使用者\n修改心情類型或備注"]
+    A4 -- 刪除 --> A6["@登入使用者\n刪除該心情紀錄"]
+    A4 -- 否 --> END([結束])
+
+    A5 --> A7["@系統\n更新心情紀錄（mood_type / note）"]
+    A7 --> END
+    A6 --> A8["@系統\n移除心情紀錄"]
+    A8 --> END

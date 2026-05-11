@@ -1,9 +1,10 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { listMoods, createMood } from '@/lib/api/mood'
+import { listMoods, createMood, updateMood, deleteMood } from '@/lib/api/mood'
 import { ApiClientError } from '@/lib/api/client'
 import { Toast } from '@/components/Toast'
+import { Modal } from '@/components/ui/Modal'
 import type { MoodEntry, MoodType } from '@/lib/types/mood.schema'
 import styles from './page.module.css'
 
@@ -28,6 +29,11 @@ export default function MoodsPage() {
   const [submitting, setSubmitting] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
 
+  const [editEntry, setEditEntry] = useState<MoodEntry | null>(null)
+  const [editMoodType, setEditMoodType] = useState<MoodType | null>(null)
+  const [editNote, setEditNote] = useState('')
+  const [editSubmitting, setEditSubmitting] = useState(false)
+
   const refresh = useCallback(async () => {
     try {
       const res = await listMoods()
@@ -40,6 +46,32 @@ export default function MoodsPage() {
   }, [])
 
   useEffect(() => { refresh() }, [refresh])
+
+  async function handleEditMood(e: React.FormEvent) {
+    e.preventDefault()
+    if (!editEntry || !editMoodType) return
+    setEditSubmitting(true)
+    try {
+      await updateMood(editEntry.entry_id, { mood_type: editMoodType, note: editNote.trim() || undefined })
+      setToast('心情紀錄已更新 ✓')
+      setEditEntry(null)
+      refresh()
+    } catch (err) {
+      setToast(err instanceof ApiClientError ? err.message : '更新失敗')
+    } finally {
+      setEditSubmitting(false)
+    }
+  }
+
+  async function handleDeleteMood(entryId: number) {
+    try {
+      await deleteMood(entryId)
+      setEntries(prev => prev.filter(e => e.entry_id !== entryId))
+      setToast('已刪除 ✓')
+    } catch (err) {
+      setToast(err instanceof ApiClientError ? err.message : '刪除失敗')
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -129,8 +161,56 @@ export default function MoodsPage() {
               {entry.note && <div className={styles.historyNote}>{entry.note}</div>}
             </div>
             <div className={styles.historyDate}>{entry.entry_date}</div>
+            <div className={styles.historyActions}>
+              <button className="btn btn-ghost btn-icon"
+                onClick={() => { setEditEntry(entry); setEditMoodType(entry.mood_type); setEditNote(entry.note ?? '') }}
+                aria-label="編輯">✏️</button>
+              <button className="btn btn-ghost btn-icon"
+                onClick={() => handleDeleteMood(entry.entry_id)}
+                aria-label="刪除">🗑️</button>
+            </div>
           </div>
         ))
+      )}
+
+      {editEntry && (
+        <Modal
+          title="編輯心情紀錄 🌈"
+          onClose={() => setEditEntry(null)}
+          footer={
+            <>
+              <button className="btn btn-secondary" onClick={() => setEditEntry(null)}>取消</button>
+              <button className="btn btn-primary" form="edit-mood-form" type="submit" disabled={editSubmitting}>
+                {editSubmitting ? '儲存中…' : '儲存'}
+              </button>
+            </>
+          }
+        >
+          <form id="edit-mood-form" onSubmit={handleEditMood}>
+            <div className="form-group">
+              <label className="form-label">心情</label>
+              <div className={styles.moodGrid} style={{ marginBottom: 0 }}>
+                {MOOD_OPTIONS.map(opt => (
+                  <button
+                    key={opt.type}
+                    type="button"
+                    className={`${styles.moodOption} ${opt.cls} ${editMoodType === opt.type ? styles.selected : ''}`}
+                    onClick={() => setEditMoodType(opt.type)}
+                  >
+                    <span className={styles.moodEmoji}>{opt.emoji}</span>
+                    <span className={styles.moodLabel}>{opt.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="form-group" style={{ marginTop: 16 }}>
+              <label className="form-label">備注（選填）</label>
+              <textarea className="form-input" style={{ minHeight: 80 }}
+                value={editNote}
+                onChange={e => setEditNote(e.target.value)} />
+            </div>
+          </form>
+        </Modal>
       )}
 
       {toast && <Toast message={toast} onClose={() => setToast(null)} />}

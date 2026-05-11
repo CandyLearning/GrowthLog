@@ -1,6 +1,23 @@
 import { apiClient, ApiClientError } from '@/lib/api/client'
 import type { RecordListResponse } from '@/lib/types'
 
+export async function updateRecord(
+  goalId: number,
+  recordId: number,
+  body: { title: string; content?: string }
+): Promise<{ success: boolean }> {
+  return apiClient<{ success: boolean }>(`/goals/${goalId}/records/${recordId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(body),
+  })
+}
+
+export async function deleteRecord(goalId: number, recordId: number): Promise<{ success: boolean }> {
+  return apiClient<{ success: boolean }>(`/goals/${goalId}/records/${recordId}`, {
+    method: 'DELETE',
+  })
+}
+
 export async function listRecords(goalId: number): Promise<RecordListResponse> {
   return apiClient<RecordListResponse>(`/goals/${goalId}/records`)
 }

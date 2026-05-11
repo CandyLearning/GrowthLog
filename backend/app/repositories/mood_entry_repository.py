@@ -33,3 +33,7 @@ class MoodEntryRepository:
             .order_by(MoodEntry.entry_date.desc())
             .all()
         )
+
+    def delete(self, entry: MoodEntry) -> None:
+        self.session.delete(entry)
+        self.session.commit()

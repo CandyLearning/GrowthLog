@@ -40,3 +40,41 @@ def create_mood(
 def list_moods(user_id: int, db: Session) -> List[MoodEntry]:
     repo = MoodEntryRepository(db)
     return repo.find_all_by_user(user_id)
+
+
+def update_mood(
+    user_id: int,
+    entry_id: int,
+    mood_type: Optional[str],
+    note: Optional[str],
+    db: Session,
+) -> None:
+    if not mood_type:
+        raise ValueError("MISSING_REQUIRED_FIELD")
+    if mood_type not in _VALID_MOOD_TYPES:
+        raise ValueError("INVALID_VALUE")
+
+    repo = MoodEntryRepository(db)
+    entry = repo.find_by_id(entry_id)
+    if entry is None:
+        raise ValueError("NOT_FOUND")
+    if entry.user_id != user_id:
+        raise ValueError("UNAUTHORIZED")
+
+    entry.mood_type = mood_type
+    entry.note = note or None
+    entry.updated_by = user_id
+    db.commit()
+    logger.info("Mood updated: entry_id=%s user_id=%s", entry_id, user_id)
+
+
+def delete_mood(user_id: int, entry_id: int, db: Session) -> None:
+    repo = MoodEntryRepository(db)
+    entry = repo.find_by_id(entry_id)
+    if entry is None:
+        raise ValueError("NOT_FOUND")
+    if entry.user_id != user_id:
+        raise ValueError("UNAUTHORIZED")
+
+    repo.delete(entry)
+    logger.info("Mood deleted: entry_id=%s user_id=%s", entry_id, user_id)

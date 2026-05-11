@@ -91,4 +91,44 @@ export const recordHandlers = [
 
     return HttpResponse.json({ success: true, data: { success: true } })
   }),
+
+  // PATCH /api/v1/goals/:goalId/records/:recordId — updateRecord
+  http.patch('/api/v1/goals/:goalId/records/:recordId', async ({ params, request }) => {
+    const goalId = Number(params.goalId)
+    const recordId = Number(params.recordId)
+    const body = await request.json() as { title?: string; content?: string }
+
+    if (!body.title || body.title.trim() === '') {
+      return HttpResponse.json(
+        { success: false, error: { code: 'MISSING_REQUIRED_FIELD', message: '標題為必填' } },
+        { status: 400 }
+      )
+    }
+
+    const records = recordsByGoal.get(goalId) ?? []
+    const idx = records.findIndex(r => r.record_id === recordId)
+    if (idx === -1) {
+      return HttpResponse.json(
+        { success: false, error: { code: 'NOT_FOUND', message: '學習紀錄不存在' } },
+        { status: 404 }
+      )
+    }
+
+    records[idx] = { ...records[idx], title: body.title, content: body.content }
+    recordsByGoal.set(goalId, records)
+
+    return HttpResponse.json({ success: true, data: { success: true } })
+  }),
+
+  // DELETE /api/v1/goals/:goalId/records/:recordId — deleteRecord
+  http.delete('/api/v1/goals/:goalId/records/:recordId', ({ params }) => {
+    const goalId = Number(params.goalId)
+    const recordId = Number(params.recordId)
+
+    const records = recordsByGoal.get(goalId) ?? []
+    const filtered = records.filter(r => r.record_id !== recordId)
+    recordsByGoal.set(goalId, filtered)
+
+    return HttpResponse.json({ success: true, data: { success: true } })
+  }),
 ]

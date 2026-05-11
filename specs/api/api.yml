@@ -171,6 +171,58 @@ paths:
         '404':
           $ref: '#/components/responses/ErrorResponse'
 
+  /goals/{goalId}/records/{recordId}:
+    patch:
+      operationId: updateRecord
+      summary: 編輯學習紀錄
+      parameters:
+        - name: goalId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: recordId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRecordRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+    delete:
+      operationId: deleteRecord
+      summary: 刪除學習紀錄
+      parameters:
+        - name: goalId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: recordId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+
   # ─────────────────────────────────────────
   # Mood
   # ─────────────────────────────────────────
@@ -199,6 +251,48 @@ paths:
         '200':
           $ref: '#/components/responses/SuccessResponse'
         '400':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /moods/{entryId}:
+    patch:
+      operationId: updateMood
+      summary: 編輯心情紀錄
+      parameters:
+        - name: entryId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMoodRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+    delete:
+      operationId: deleteMood
+      summary: 刪除心情紀錄
+      parameters:
+        - name: entryId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
           $ref: '#/components/responses/ErrorResponse'
 
   # ─────────────────────────────────────────
@@ -516,6 +610,15 @@ components:
           type: string
           format: binary
 
+    UpdateRecordRequest:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+
     # ── Mood ────────────────────────────────
 
     MoodEntry:
@@ -555,6 +658,16 @@ components:
           type: array
           items:
             type: integer
+
+    UpdateMoodRequest:
+      type: object
+      required: [mood_type]
+      properties:
+        mood_type:
+          type: string
+          enum: [depressed, sad, unhappy, neutral, good, happy]
+        note:
+          type: string
 
     # ── Gratitude ───────────────────────────
 

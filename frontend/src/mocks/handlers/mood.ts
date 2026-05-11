@@ -46,4 +46,36 @@ export const moodHandlers = [
 
     return HttpResponse.json({ success: true, data: { success: true } })
   }),
+
+  // PATCH /api/v1/moods/:entryId — updateMood
+  http.patch('/api/v1/moods/:entryId', async ({ params, request }) => {
+    const entryId = Number(params.entryId)
+    const body = await request.json() as { mood_type?: string; note?: string }
+
+    if (!body.mood_type || !VALID_MOOD_TYPES.includes(body.mood_type as MoodType)) {
+      return HttpResponse.json(
+        { success: false, error: { code: 'INVALID_VALUE', message: 'mood_type 無效' } },
+        { status: 400 }
+      )
+    }
+
+    const idx = moodState.findIndex(e => e.entry_id === entryId)
+    if (idx === -1) {
+      return HttpResponse.json(
+        { success: false, error: { code: 'NOT_FOUND', message: '心情紀錄不存在' } },
+        { status: 404 }
+      )
+    }
+
+    moodState[idx] = { ...moodState[idx], mood_type: body.mood_type as MoodType, note: body.note }
+
+    return HttpResponse.json({ success: true, data: { success: true } })
+  }),
+
+  // DELETE /api/v1/moods/:entryId — deleteMood
+  http.delete('/api/v1/moods/:entryId', ({ params }) => {
+    const entryId = Number(params.entryId)
+    moodState = moodState.filter(e => e.entry_id !== entryId)
+    return HttpResponse.json({ success: true, data: { success: true } })
+  }),
 ]

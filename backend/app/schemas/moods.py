@@ -8,6 +8,11 @@ class CreateMoodRequest(BaseModel):
     tag_ids: Optional[List[int]] = None
 
 
+class UpdateMoodRequest(BaseModel):
+    mood_type: Optional[str] = None
+    note: Optional[str] = None
+
+
 class MoodEntryResponse(BaseModel):
     entry_id: int
     mood_type: str

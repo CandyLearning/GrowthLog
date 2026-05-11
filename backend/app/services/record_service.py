@@ -44,3 +44,40 @@ def create_record(
 def list_records(goal_id: int, db: Session) -> List[LearningRecord]:
     repo = LearningRecordRepository(db)
     return repo.find_all_by_goal(goal_id)
+
+
+def update_record(
+    user_id: int,
+    goal_id: int,
+    record_id: int,
+    title: Optional[str],
+    content: Optional[str],
+    db: Session,
+) -> None:
+    if not title or not title.strip():
+        raise ValueError("MISSING_REQUIRED_FIELD")
+
+    repo = LearningRecordRepository(db)
+    record = repo.find_by_id(record_id)
+    if record is None:
+        raise ValueError("NOT_FOUND")
+    if record.user_id != user_id or record.goal_id != goal_id:
+        raise ValueError("UNAUTHORIZED")
+
+    record.title = title
+    record.content = content or None
+    record.updated_by = user_id
+    db.commit()
+    logger.info("Record updated: record_id=%s user_id=%s", record_id, user_id)
+
+
+def delete_record(user_id: int, goal_id: int, record_id: int, db: Session) -> None:
+    repo = LearningRecordRepository(db)
+    record = repo.find_by_id(record_id)
+    if record is None:
+        raise ValueError("NOT_FOUND")
+    if record.user_id != user_id or record.goal_id != goal_id:
+        raise ValueError("UNAUTHORIZED")
+
+    repo.delete(record)
+    logger.info("Record deleted: record_id=%s user_id=%s", record_id, user_id)
