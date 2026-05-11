@@ -2,6 +2,9 @@
 .playwright-mcp
 .output
 
+#file upload
+/backend/uploads
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
