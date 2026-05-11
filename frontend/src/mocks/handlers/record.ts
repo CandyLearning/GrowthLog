@@ -1,5 +1,6 @@
 import { http, HttpResponse } from 'msw'
-import { mockGoals, mockRecords } from '@/mocks/fixtures'
+import { mockRecords } from '@/mocks/fixtures'
+import { goalState } from './goal'
 import type { LearningRecord } from '@/lib/types/record.schema'
 
 // goalId → records[]
@@ -26,7 +27,7 @@ export const recordHandlers = [
       )
     }
 
-    const goalExists = mockGoals.some(g => g.goal_id === goalId) || recordsByGoal.has(goalId)
+    const goalExists = goalState.some(g => g.goal_id === goalId) || recordsByGoal.has(goalId)
     if (!goalExists) {
       return HttpResponse.json(
         { success: false, error: { code: 'NOT_FOUND', message: '學習目標不存在' } },
@@ -43,7 +44,7 @@ export const recordHandlers = [
   // 404: goal not found
   http.post('/api/v1/goals/:goalId/records', async ({ params, request }) => {
     const goalId = Number(params.goalId)
-    const goalExists = mockGoals.some(g => g.goal_id === goalId) || recordsByGoal.has(goalId)
+    const goalExists = goalState.some(g => g.goal_id === goalId) || recordsByGoal.has(goalId)
 
     if (!goalExists) {
       return HttpResponse.json(
