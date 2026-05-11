@@ -1,5 +1,6 @@
 .claude
 .playwright-mcp
+.output
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
