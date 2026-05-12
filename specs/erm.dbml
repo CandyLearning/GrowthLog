@@ -84,7 +84,7 @@ Table learning_goals {
 
 Table learning_records {
   id          integer    [pk, increment]
-  goal_id     integer    [not null, ref: > learning_goals.id]
+  goal_id     integer    [not null, ref: > learning_goals.id, note: 'on delete cascade — 刪除目標時連帶刪除所有紀錄']
   user_id     integer    [not null, ref: > users.id]
   title       varchar    [not null, note: '紀錄標題，必填']
   content     text       [note: '文字內容，選填']
@@ -185,6 +185,12 @@ Table pets {
 
   Note: '電子寵物。每人一隻。初始值：happiness=100, fullness=100, level=1'
 }
+
+// ─────────────────────────────────────────
+// 級聯刪除規則（Cascade Delete）
+// ─────────────────────────────────────────
+// 刪除 learning_goals 時，對應的 learning_records 一併刪除（不可復原）
+Ref: learning_records.goal_id > learning_goals.id [delete: cascade]
 
 // ─────────────────────────────────────────
 // 行為連動規則（Phase 05 實作參考）
