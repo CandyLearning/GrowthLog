@@ -2,6 +2,36 @@ openapi: 3.0.0
 info:
   title: GrowthLog API
   version: 1.0.0
+  description: |
+    ## Response Envelope 規則（實際行為）
+
+    **所有端點均回傳 HTTP 200**，以 response body 區分成功與失敗：
+
+    | 情境 | Body 格式 |
+    |------|-----------|
+    | 成功讀取 | 直接回傳資料物件，無 success 包裝 |
+    | 成功寫入 | `{"success": true}` |
+    | 寵物操作成功 | `{"success": true, "pet": {...}}` |
+    | 任何錯誤 | `{"success": false, "error": {"violation_type": "<CODE>"}}` |
+
+    常見 violation_type：UNAUTHORIZED、NOT_FOUND、INVALID_VALUE、
+    PET_ALREADY_EXISTS、MISSING_REQUIRED_FIELD。
+
+    ## 認證
+
+    受保護端點需在 Header 帶入：Authorization: Bearer <JWT>。
+    JWT 由 POST /api/auth/google 取得，以 HS256 + JWT_SECRET 環境變數簽發。
+    前端將 token 存入 auth-token cookie，每次請求自動帶入。
+
+    ## 路徑前綴
+
+    後端實際路徑加 /api 前綴（如 /api/goals）。
+    前端透過 Next.js proxy 將 /api/v1/* rewrite 至後端 /api/*。
+    本文件路徑省略 /api 前綴，以描述 API 的語意介面。
+
+servers:
+  - url: http://localhost:8000/api
+    description: 本地開發後端
 
 security:
   - bearerAuth: []
@@ -445,13 +475,13 @@ components:
 
   responses:
     SuccessResponse:
-      description: 操作成功
+      description: 操作成功（HTTP 200）
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/SuccessResult'
     ErrorResponse:
-      description: 操作失敗
+      description: 操作失敗（HTTP 200，以 success=false 表示錯誤）
       content:
         application/json:
           schema:
@@ -462,11 +492,24 @@ components:
     # ── Shared ──────────────────────────────
 
     Error:
+      description: |
+        所有錯誤回傳格式（含 UNAUTHORIZED、NOT_FOUND、INVALID_VALUE 等），
+        均以 HTTP 200 回傳此結構。
       type: object
-      required: [message]
+      required: [success, error]
       properties:
-        message:
-          type: string
+        success:
+          type: boolean
+          enum: [false]
+        error:
+          type: object
+          required: [violation_type]
+          properties:
+            violation_type:
+              type: string
+              description: >
+                錯誤代碼：UNAUTHORIZED | NOT_FOUND | INVALID_VALUE |
+                PET_ALREADY_EXISTS | MISSING_REQUIRED_FIELD
 
     SuccessResult:
       type: object
@@ -474,6 +517,7 @@ components:
       properties:
         success:
           type: boolean
+          enum: [true]
 
     # ── Auth ────────────────────────────────
 

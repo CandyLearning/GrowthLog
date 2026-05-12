@@ -46,10 +46,10 @@ export async function createRecord(
     headers,
   })
 
-  const json = await res.json() as { success: boolean; data?: { success: boolean }; error?: { code: string; message: string } }
+  const json = await res.json() as { success: boolean; error?: { code: string; message: string } }
   if (!res.ok || !json.success) {
     const err = json.error ?? { code: 'UNKNOWN', message: res.statusText }
     throw new ApiClientError(err.code, err.message, res.status)
   }
-  return json.data as { success: boolean }
+  return { success: true }
 }
