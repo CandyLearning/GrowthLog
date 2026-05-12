@@ -40,7 +40,7 @@ def update_gratitude(user_id: int, entry_id: int, content: Optional[str], db: Se
     if entry is None:
         raise ValueError("NOT_FOUND")
     if entry.user_id != user_id:
-        raise ValueError("UNAUTHORIZED")
+        raise ValueError("FORBIDDEN")
 
     entry.content = content
     entry.updated_by = user_id
@@ -54,7 +54,7 @@ def delete_gratitude(user_id: int, entry_id: int, db: Session) -> None:
     if entry is None:
         raise ValueError("NOT_FOUND")
     if entry.user_id != user_id:
-        raise ValueError("UNAUTHORIZED")
+        raise ValueError("FORBIDDEN")
 
     repo.delete(entry)
     logger.info("Gratitude entry deleted: entry_id=%s user_id=%s", entry_id, user_id)

@@ -53,7 +53,7 @@ def update_goal_status(user_id: int, goal_id: int, new_status: str, db: Session)
     if goal is None:
         raise ValueError("NOT_FOUND")
     if goal.user_id != user_id:
-        raise ValueError("UNAUTHORIZED")
+        raise ValueError("FORBIDDEN")
     if new_status not in _VALID_TRANSITIONS.get(goal.status, []):
         raise ValueError("INVALID_STATUS_TRANSITION")
 

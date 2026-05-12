@@ -24,7 +24,7 @@ Feature: 編輯心情紀錄
       When 使用者編輯心情紀錄 2：
         | mood_type |
         | happy     |
-      Then 操作失敗，violation_type 為 "UNAUTHORIZED"
+      Then 操作失敗，violation_type 為 "FORBIDDEN"
 
   Rule: 前置 - 編輯時 mood_type 為必填且必須是合法選項
     Scenario Outline: mood_type 無效時編輯失敗

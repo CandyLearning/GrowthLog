@@ -19,7 +19,7 @@ Feature: 更新學習目標狀態
         | 1       | 2       | 學 Java | not_started |
       And 以使用者 1 的身份發出請求
       When 使用者將學習目標 1 的狀態更新為 "in_progress"
-      Then 操作失敗，violation_type 為 "UNAUTHORIZED"
+      Then 操作失敗，violation_type 為 "FORBIDDEN"
 
   Rule: 前置 - 目標狀態只能在合法狀態之間切換
     Scenario Outline: 非法狀態轉換失敗

@@ -7,6 +7,7 @@ from app.schemas.goals import CreateGoalRequest, Goal, UpdateGoalStatusRequest
 from app.services.goal_service import create_goal, list_goals, update_goal_status
 from app.core.security import decode_token
 from app.core.deps import get_db
+from app.exceptions import error_response
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/goals", tags=["goals"])
@@ -21,14 +22,14 @@ def create_goal_endpoint(
     db: Session = Depends(get_db),
 ):
     if credentials is None:
-        return {"success": False, "error": {"violation_type": "UNAUTHORIZED"}}
+        return error_response("UNAUTHORIZED")
     payload = decode_token(credentials.credentials)
     user_id = payload["user_id"]
 
     try:
         create_goal(user_id, body.title, body.description, body.start_date, body.end_date, db)
     except ValueError as e:
-        return {"success": False, "error": {"violation_type": str(e)}}
+        return error_response(str(e))
 
     return {"success": True}
 
@@ -39,7 +40,7 @@ def list_goals_endpoint(
     db: Session = Depends(get_db),
 ):
     if credentials is None:
-        return {"success": False, "error": {"violation_type": "UNAUTHORIZED"}}
+        return error_response("UNAUTHORIZED")
     payload = decode_token(credentials.credentials)
     user_id = payload["user_id"]
 
@@ -67,13 +68,13 @@ def update_goal_status_endpoint(
     db: Session = Depends(get_db),
 ):
     if credentials is None:
-        return {"success": False, "error": {"violation_type": "UNAUTHORIZED"}}
+        return error_response("UNAUTHORIZED")
     payload = decode_token(credentials.credentials)
     user_id = payload["user_id"]
 
     try:
         update_goal_status(user_id, goal_id, body.status, db)
     except ValueError as e:
-        return {"success": False, "error": {"violation_type": str(e)}}
+        return error_response(str(e))
 
     return {"success": True}

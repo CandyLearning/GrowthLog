@@ -7,6 +7,7 @@ from app.schemas.moods import CreateMoodRequest, UpdateMoodRequest
 from app.services.mood_service import create_mood, list_moods, update_mood, delete_mood
 from app.core.security import decode_token
 from app.core.deps import get_db
+from app.exceptions import error_response
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/moods", tags=["moods"])
@@ -21,14 +22,14 @@ def create_mood_endpoint(
     db: Session = Depends(get_db),
 ):
     if credentials is None:
-        return {"success": False, "error": {"violation_type": "UNAUTHORIZED"}}
+        return error_response("UNAUTHORIZED")
     payload = decode_token(credentials.credentials)
     user_id = payload["user_id"]
 
     try:
         create_mood(user_id, body.mood_type, body.note, body.tag_ids, db)
     except ValueError as e:
-        return {"success": False, "error": {"violation_type": str(e)}}
+        return error_response(str(e))
 
     return {"success": True}
 
@@ -39,7 +40,7 @@ def list_moods_endpoint(
     db: Session = Depends(get_db),
 ):
     if credentials is None:
-        return {"success": False, "error": {"violation_type": "UNAUTHORIZED"}}
+        return error_response("UNAUTHORIZED")
     payload = decode_token(credentials.credentials)
     user_id = payload["user_id"]
     entries = list_moods(user_id, db)
@@ -64,14 +65,14 @@ def update_mood_endpoint(
     db: Session = Depends(get_db),
 ):
     if credentials is None:
-        return {"success": False, "error": {"violation_type": "UNAUTHORIZED"}}
+        return error_response("UNAUTHORIZED")
     payload = decode_token(credentials.credentials)
     user_id = payload["user_id"]
 
     try:
         update_mood(user_id, entry_id, body.mood_type, body.note, db)
     except ValueError as e:
-        return {"success": False, "error": {"violation_type": str(e)}}
+        return error_response(str(e))
 
     return {"success": True}
 
@@ -83,13 +84,13 @@ def delete_mood_endpoint(
     db: Session = Depends(get_db),
 ):
     if credentials is None:
-        return {"success": False, "error": {"violation_type": "UNAUTHORIZED"}}
+        return error_response("UNAUTHORIZED")
     payload = decode_token(credentials.credentials)
     user_id = payload["user_id"]
 
     try:
         delete_mood(user_id, entry_id, db)
     except ValueError as e:
-        return {"success": False, "error": {"violation_type": str(e)}}
+        return error_response(str(e))
 
     return {"success": True}

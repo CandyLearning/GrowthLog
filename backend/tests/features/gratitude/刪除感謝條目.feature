@@ -22,7 +22,7 @@ Feature: 刪除感謝日記條目
         | 2        | 2       | 感謝家人 | 2026-05-08 |
       And 以使用者 1 的身份發出請求
       When 使用者刪除感謝條目 2
-      Then 操作失敗，violation_type 為 "UNAUTHORIZED"
+      Then 操作失敗，violation_type 為 "FORBIDDEN"
 
   Rule: 前置 - 感謝條目必須存在才能刪除
     Example: 刪除不存在的感謝條目失敗

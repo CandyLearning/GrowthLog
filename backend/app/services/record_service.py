@@ -62,7 +62,7 @@ def update_record(
     if record is None:
         raise ValueError("NOT_FOUND")
     if record.user_id != user_id or record.goal_id != goal_id:
-        raise ValueError("UNAUTHORIZED")
+        raise ValueError("FORBIDDEN")
 
     record.title = title
     record.content = content or None
@@ -77,7 +77,7 @@ def delete_record(user_id: int, goal_id: int, record_id: int, db: Session) -> No
     if record is None:
         raise ValueError("NOT_FOUND")
     if record.user_id != user_id or record.goal_id != goal_id:
-        raise ValueError("UNAUTHORIZED")
+        raise ValueError("FORBIDDEN")
 
     repo.delete(record)
     logger.info("Record deleted: record_id=%s user_id=%s", record_id, user_id)

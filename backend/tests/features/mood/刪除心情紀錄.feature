@@ -22,7 +22,7 @@ Feature: 刪除心情紀錄
         | 2        | 2       | sad       | 2026-05-08 |
       And 以使用者 1 的身份發出請求
       When 使用者刪除心情紀錄 2
-      Then 操作失敗，violation_type 為 "UNAUTHORIZED"
+      Then 操作失敗，violation_type 為 "FORBIDDEN"
 
   Rule: 前置 - 心情紀錄必須存在才能刪除
     Example: 刪除不存在的心情紀錄失敗

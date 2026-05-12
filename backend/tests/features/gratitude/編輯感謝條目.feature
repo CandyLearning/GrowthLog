@@ -24,7 +24,7 @@ Feature: 編輯感謝日記條目
       When 使用者編輯感謝條目 2：
         | content    |
         | 修改的內容 |
-      Then 操作失敗，violation_type 為 "UNAUTHORIZED"
+      Then 操作失敗，violation_type 為 "FORBIDDEN"
 
   Rule: 前置 - 編輯後的內容必須非空白
     Example: 將感謝條目內容改為空白時失敗

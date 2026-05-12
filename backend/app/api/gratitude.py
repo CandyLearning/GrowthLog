@@ -7,6 +7,7 @@ from app.schemas.gratitude import CreateGratitudeRequest, UpdateGratitudeRequest
 from app.services.gratitude_service import create_gratitude, list_gratitude, update_gratitude, delete_gratitude
 from app.core.security import decode_token
 from app.core.deps import get_db
+from app.exceptions import error_response
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/gratitude", tags=["gratitude"])
@@ -21,14 +22,14 @@ def create_gratitude_endpoint(
     db: Session = Depends(get_db),
 ):
     if credentials is None:
-        return {"success": False, "error": {"violation_type": "UNAUTHORIZED"}}
+        return error_response("UNAUTHORIZED")
     payload = decode_token(credentials.credentials)
     user_id = payload["user_id"]
 
     try:
         create_gratitude(user_id, body.content, db)
     except ValueError as e:
-        return {"success": False, "error": {"violation_type": str(e)}}
+        return error_response(str(e))
 
     return {"success": True}
 
@@ -39,7 +40,7 @@ def list_gratitude_endpoint(
     db: Session = Depends(get_db),
 ):
     if credentials is None:
-        return {"success": False, "error": {"violation_type": "UNAUTHORIZED"}}
+        return error_response("UNAUTHORIZED")
     payload = decode_token(credentials.credentials)
     user_id = payload["user_id"]
     entries = list_gratitude(user_id, db)
@@ -63,14 +64,14 @@ def update_gratitude_endpoint(
     db: Session = Depends(get_db),
 ):
     if credentials is None:
-        return {"success": False, "error": {"violation_type": "UNAUTHORIZED"}}
+        return error_response("UNAUTHORIZED")
     payload = decode_token(credentials.credentials)
     user_id = payload["user_id"]
 
     try:
         update_gratitude(user_id, entry_id, body.content, db)
     except ValueError as e:
-        return {"success": False, "error": {"violation_type": str(e)}}
+        return error_response(str(e))
 
     return {"success": True}
 
@@ -82,13 +83,13 @@ def delete_gratitude_endpoint(
     db: Session = Depends(get_db),
 ):
     if credentials is None:
-        return {"success": False, "error": {"violation_type": "UNAUTHORIZED"}}
+        return error_response("UNAUTHORIZED")
     payload = decode_token(credentials.credentials)
     user_id = payload["user_id"]
 
     try:
         delete_gratitude(user_id, entry_id, db)
     except ValueError as e:
-        return {"success": False, "error": {"violation_type": str(e)}}
+        return error_response(str(e))
 
     return {"success": True}

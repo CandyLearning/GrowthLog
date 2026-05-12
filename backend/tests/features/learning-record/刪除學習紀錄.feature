@@ -28,7 +28,7 @@ Feature: 刪除學習紀錄
         | 2         | 2       | 2       | Go 紀錄 | 2026-05-08 |
       And 以使用者 1 的身份發出請求
       When 使用者刪除學習目標 2 的學習紀錄 2
-      Then 操作失敗，violation_type 為 "UNAUTHORIZED"
+      Then 操作失敗，violation_type 為 "FORBIDDEN"
 
   Rule: 前置 - 學習紀錄必須存在才能刪除
     Example: 刪除不存在的學習紀錄失敗

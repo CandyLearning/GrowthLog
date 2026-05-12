@@ -59,7 +59,7 @@ def update_mood(
     if entry is None:
         raise ValueError("NOT_FOUND")
     if entry.user_id != user_id:
-        raise ValueError("UNAUTHORIZED")
+        raise ValueError("FORBIDDEN")
 
     entry.mood_type = mood_type
     entry.note = note or None
@@ -74,7 +74,7 @@ def delete_mood(user_id: int, entry_id: int, db: Session) -> None:
     if entry is None:
         raise ValueError("NOT_FOUND")
     if entry.user_id != user_id:
-        raise ValueError("UNAUTHORIZED")
+        raise ValueError("FORBIDDEN")
 
     repo.delete(entry)
     logger.info("Mood deleted: entry_id=%s user_id=%s", entry_id, user_id)

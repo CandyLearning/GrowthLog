@@ -30,7 +30,7 @@ Feature: 編輯學習紀錄
       When 使用者編輯學習目標 2 的學習紀錄 2：
         | title  |
         | 修改後 |
-      Then 操作失敗，violation_type 為 "UNAUTHORIZED"
+      Then 操作失敗，violation_type 為 "FORBIDDEN"
 
   Rule: 前置 - 編輯後的標題必須非空白
     Example: 將標題改為空白時失敗

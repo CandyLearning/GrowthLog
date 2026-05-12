@@ -3,19 +3,26 @@ info:
   title: GrowthLog API
   version: 1.0.0
   description: |
-    ## Response Envelope 規則（實際行為）
+    ## Response Envelope 規則
 
-    **所有端點均回傳 HTTP 200**，以 response body 區分成功與失敗：
+    | 情境 | HTTP Status | Body 格式 |
+    |------|------------|-----------|
+    | 成功讀取 | 200 | 直接回傳資料物件，無 success 包裝 |
+    | 成功寫入 | 200 | `{"success": true}` |
+    | 寵物操作成功 | 200 | `{"success": true, "pet": {...}}` |
+    | 任何錯誤 | 對應 4xx | `{"success": false, "error": {"violation_type": "<CODE>"}}` |
 
-    | 情境 | Body 格式 |
-    |------|-----------|
-    | 成功讀取 | 直接回傳資料物件，無 success 包裝 |
-    | 成功寫入 | `{"success": true}` |
-    | 寵物操作成功 | `{"success": true, "pet": {...}}` |
-    | 任何錯誤 | `{"success": false, "error": {"violation_type": "<CODE>"}}` |
+    ## violation_type → HTTP Status 對應表
 
-    常見 violation_type：UNAUTHORIZED、NOT_FOUND、INVALID_VALUE、
-    PET_ALREADY_EXISTS、MISSING_REQUIRED_FIELD。
+    | violation_type | HTTP Status | 語意 |
+    |----------------|-------------|------|
+    | `UNAUTHORIZED` | 401 | 未帶 token 或 token 無效 |
+    | `FORBIDDEN` | 403 | 有效 token 但無權操作他人資源 |
+    | `NOT_FOUND` | 404 | 資源不存在 |
+    | `MISSING_REQUIRED_FIELD` | 400 | 必填欄位缺失 |
+    | `INVALID_VALUE` | 400 | 欄位值不合法 |
+    | `INVALID_STATUS_TRANSITION` | 422 | 狀態機轉換不合法 |
+    | `ALREADY_EXISTS` | 422 | 業務規則衝突（如寵物已存在）|
 
     ## 認證
 
@@ -481,7 +488,7 @@ components:
           schema:
             $ref: '#/components/schemas/SuccessResult'
     ErrorResponse:
-      description: 操作失敗（HTTP 200，以 success=false 表示錯誤）
+      description: 操作失敗，回傳對應 4xx HTTP status + success=false body
       content:
         application/json:
           schema:
@@ -493,8 +500,8 @@ components:
 
     Error:
       description: |
-        所有錯誤回傳格式（含 UNAUTHORIZED、NOT_FOUND、INVALID_VALUE 等），
-        均以 HTTP 200 回傳此結構。
+        所有錯誤回傳格式（含 UNAUTHORIZED、FORBIDDEN、NOT_FOUND、INVALID_VALUE 等），
+        回傳對應 4xx HTTP status code，body 固定為此結構。
       type: object
       required: [success, error]
       properties:

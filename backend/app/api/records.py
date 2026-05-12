@@ -3,13 +3,14 @@ import os
 import shutil
 import uuid
 from typing import Optional
-from fastapi import APIRouter, Depends, File, Form, UploadFile, Body
+from fastapi import APIRouter, Depends, File, Form, UploadFile
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from app.services.record_service import create_record, list_records, update_record, delete_record
 from app.schemas.records import UpdateRecordRequest
 from app.core.security import decode_token
 from app.core.deps import get_db
+from app.exceptions import error_response
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["records"])
@@ -29,7 +30,7 @@ def create_record_endpoint(
     db: Session = Depends(get_db),
 ):
     if credentials is None:
-        return {"success": False, "error": {"violation_type": "UNAUTHORIZED"}}
+        return error_response("UNAUTHORIZED")
     payload = decode_token(credentials.credentials)
     user_id = payload["user_id"]
 
@@ -46,7 +47,7 @@ def create_record_endpoint(
     try:
         create_record(user_id, goal_id, title, content, image_url, db)
     except ValueError as e:
-        return {"success": False, "error": {"violation_type": str(e)}}
+        return error_response(str(e))
 
     return {"success": True}
 
@@ -58,7 +59,7 @@ def list_records_endpoint(
     db: Session = Depends(get_db),
 ):
     if credentials is None:
-        return {"success": False, "error": {"violation_type": "UNAUTHORIZED"}}
+        return error_response("UNAUTHORIZED")
     decode_token(credentials.credentials)
 
     records = list_records(goal_id, db)
@@ -85,14 +86,14 @@ def update_record_endpoint(
     db: Session = Depends(get_db),
 ):
     if credentials is None:
-        return {"success": False, "error": {"violation_type": "UNAUTHORIZED"}}
+        return error_response("UNAUTHORIZED")
     payload = decode_token(credentials.credentials)
     user_id = payload["user_id"]
 
     try:
         update_record(user_id, goal_id, record_id, body.title, body.content, db)
     except ValueError as e:
-        return {"success": False, "error": {"violation_type": str(e)}}
+        return error_response(str(e))
 
     return {"success": True}
 
@@ -105,13 +106,13 @@ def delete_record_endpoint(
     db: Session = Depends(get_db),
 ):
     if credentials is None:
-        return {"success": False, "error": {"violation_type": "UNAUTHORIZED"}}
+        return error_response("UNAUTHORIZED")
     payload = decode_token(credentials.credentials)
     user_id = payload["user_id"]
 
     try:
         delete_record(user_id, goal_id, record_id, db)
     except ValueError as e:
-        return {"success": False, "error": {"violation_type": str(e)}}
+        return error_response(str(e))
 
     return {"success": True}
