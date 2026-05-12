@@ -23,7 +23,10 @@ def create_goal_endpoint(
 ):
     if credentials is None:
         return error_response("UNAUTHORIZED")
-    payload = decode_token(credentials.credentials)
+    try:
+        payload = decode_token(credentials.credentials)
+    except ValueError as e:
+        return error_response(str(e))
     user_id = payload["user_id"]
 
     try:
@@ -41,7 +44,10 @@ def list_goals_endpoint(
 ):
     if credentials is None:
         return error_response("UNAUTHORIZED")
-    payload = decode_token(credentials.credentials)
+    try:
+        payload = decode_token(credentials.credentials)
+    except ValueError as e:
+        return error_response(str(e))
     user_id = payload["user_id"]
 
     goals = list_goals(user_id, db)
@@ -69,7 +75,10 @@ def update_goal_status_endpoint(
 ):
     if credentials is None:
         return error_response("UNAUTHORIZED")
-    payload = decode_token(credentials.credentials)
+    try:
+        payload = decode_token(credentials.credentials)
+    except ValueError as e:
+        return error_response(str(e))
     user_id = payload["user_id"]
 
     try:

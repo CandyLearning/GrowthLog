@@ -31,7 +31,10 @@ def create_record_endpoint(
 ):
     if credentials is None:
         return error_response("UNAUTHORIZED")
-    payload = decode_token(credentials.credentials)
+    try:
+        payload = decode_token(credentials.credentials)
+    except ValueError as e:
+        return error_response(str(e))
     user_id = payload["user_id"]
 
     image_url = None
@@ -60,7 +63,10 @@ def list_records_endpoint(
 ):
     if credentials is None:
         return error_response("UNAUTHORIZED")
-    decode_token(credentials.credentials)
+    try:
+        decode_token(credentials.credentials)
+    except ValueError as e:
+        return error_response(str(e))
 
     records = list_records(goal_id, db)
     return {
@@ -87,7 +93,10 @@ def update_record_endpoint(
 ):
     if credentials is None:
         return error_response("UNAUTHORIZED")
-    payload = decode_token(credentials.credentials)
+    try:
+        payload = decode_token(credentials.credentials)
+    except ValueError as e:
+        return error_response(str(e))
     user_id = payload["user_id"]
 
     try:
@@ -107,7 +116,10 @@ def delete_record_endpoint(
 ):
     if credentials is None:
         return error_response("UNAUTHORIZED")
-    payload = decode_token(credentials.credentials)
+    try:
+        payload = decode_token(credentials.credentials)
+    except ValueError as e:
+        return error_response(str(e))
     user_id = payload["user_id"]
 
     try:

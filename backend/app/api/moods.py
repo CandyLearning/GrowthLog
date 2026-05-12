@@ -23,7 +23,10 @@ def create_mood_endpoint(
 ):
     if credentials is None:
         return error_response("UNAUTHORIZED")
-    payload = decode_token(credentials.credentials)
+    try:
+        payload = decode_token(credentials.credentials)
+    except ValueError as e:
+        return error_response(str(e))
     user_id = payload["user_id"]
 
     try:
@@ -41,7 +44,10 @@ def list_moods_endpoint(
 ):
     if credentials is None:
         return error_response("UNAUTHORIZED")
-    payload = decode_token(credentials.credentials)
+    try:
+        payload = decode_token(credentials.credentials)
+    except ValueError as e:
+        return error_response(str(e))
     user_id = payload["user_id"]
     entries = list_moods(user_id, db)
     return {
@@ -66,7 +72,10 @@ def update_mood_endpoint(
 ):
     if credentials is None:
         return error_response("UNAUTHORIZED")
-    payload = decode_token(credentials.credentials)
+    try:
+        payload = decode_token(credentials.credentials)
+    except ValueError as e:
+        return error_response(str(e))
     user_id = payload["user_id"]
 
     try:
@@ -85,7 +94,10 @@ def delete_mood_endpoint(
 ):
     if credentials is None:
         return error_response("UNAUTHORIZED")
-    payload = decode_token(credentials.credentials)
+    try:
+        payload = decode_token(credentials.credentials)
+    except ValueError as e:
+        return error_response(str(e))
     user_id = payload["user_id"]
 
     try:

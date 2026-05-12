@@ -33,7 +33,10 @@ def create_pet_endpoint(
 ):
     if credentials is None:
         return error_response("UNAUTHORIZED")
-    payload = decode_token(credentials.credentials)
+    try:
+        payload = decode_token(credentials.credentials)
+    except ValueError as e:
+        return error_response(str(e))
     user_id = payload["user_id"]
 
     try:
@@ -52,7 +55,10 @@ def get_pet_endpoint(
 ):
     if credentials is None:
         return error_response("UNAUTHORIZED")
-    payload = decode_token(credentials.credentials)
+    try:
+        payload = decode_token(credentials.credentials)
+    except ValueError as e:
+        return error_response(str(e))
     user_id = payload["user_id"]
 
     try:
@@ -70,7 +76,10 @@ def feed_pet_endpoint(
 ):
     if credentials is None:
         return error_response("UNAUTHORIZED")
-    payload = decode_token(credentials.credentials)
+    try:
+        payload = decode_token(credentials.credentials)
+    except ValueError as e:
+        return error_response(str(e))
     user_id = payload["user_id"]
 
     try:
@@ -89,7 +98,10 @@ def rename_pet_endpoint(
 ):
     if credentials is None:
         return error_response("UNAUTHORIZED")
-    payload = decode_token(credentials.credentials)
+    try:
+        payload = decode_token(credentials.credentials)
+    except ValueError as e:
+        return error_response(str(e))
     user_id = payload["user_id"]
 
     try:
@@ -107,7 +119,10 @@ def interact_pet_endpoint(
 ):
     if credentials is None:
         return error_response("UNAUTHORIZED")
-    payload = decode_token(credentials.credentials)
+    try:
+        payload = decode_token(credentials.credentials)
+    except ValueError as e:
+        return error_response(str(e))
     user_id = payload["user_id"]
 
     try:

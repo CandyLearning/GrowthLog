@@ -10,4 +10,7 @@ def create_token(user_id: int) -> str:
 
 
 def decode_token(token: str) -> dict:
-    return jwt.decode(token, SECRET, algorithms=[ALGORITHM])
+    try:
+        return jwt.decode(token, SECRET, algorithms=[ALGORITHM])
+    except Exception:
+        raise ValueError("UNAUTHORIZED")

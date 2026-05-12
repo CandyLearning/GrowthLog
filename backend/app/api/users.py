@@ -23,7 +23,10 @@ def get_profile(
 ):
     if credentials is None:
         return error_response("UNAUTHORIZED")
-    payload = decode_token(credentials.credentials)
+    try:
+        payload = decode_token(credentials.credentials)
+    except ValueError as e:
+        return error_response(str(e))
     user_id = payload["user_id"]
     repo = UserRepository(db)
     user = repo.find_by_id(user_id)
@@ -44,7 +47,10 @@ def update_profile(
 ):
     if credentials is None:
         return error_response("UNAUTHORIZED")
-    payload = decode_token(credentials.credentials)
+    try:
+        payload = decode_token(credentials.credentials)
+    except ValueError as e:
+        return error_response(str(e))
     user_id = payload["user_id"]
     update_user_profile(user_id, body.display_name, body.avatar_url, db)
     return {"success": True}
