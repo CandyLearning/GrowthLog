@@ -51,6 +51,11 @@ export async function apiClient<T>(
 
   // HTTP error → parse error details from body
   if (!res.ok) {
+    if (res.status === 401 && typeof window !== 'undefined') {
+      document.cookie = 'auth-token=; path=/; max-age=0'
+      window.location.replace('/login')
+      return new Promise(() => {})
+    }
     const err = json.error ?? {}
     throw new ApiClientError(
       err.code ?? err.violation_type ?? 'UNKNOWN',
