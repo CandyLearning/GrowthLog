@@ -1,5 +1,5 @@
 import { apiClient } from '@/lib/api/client'
-import type { GoalListResponse, CreateGoalRequest, UpdateGoalStatusRequest } from '@/lib/types'
+import type { GoalListResponse, CreateGoalRequest, UpdateGoalStatusRequest, UpdateGoalRequest } from '@/lib/types'
 
 export async function listGoals(): Promise<GoalListResponse> {
   return apiClient<GoalListResponse>('/goals')
@@ -16,5 +16,18 @@ export async function updateGoalStatus(goalId: number, body: UpdateGoalStatusReq
   return apiClient<{ success: boolean }>(`/goals/${goalId}/status`, {
     method: 'PATCH',
     body: JSON.stringify(body),
+  })
+}
+
+export async function updateGoal(goalId: number, body: UpdateGoalRequest): Promise<{ success: boolean }> {
+  return apiClient<{ success: boolean }>(`/goals/${goalId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(body),
+  })
+}
+
+export async function deleteGoal(goalId: number): Promise<{ success: boolean }> {
+  return apiClient<{ success: boolean }>(`/goals/${goalId}`, {
+    method: 'DELETE',
   })
 }

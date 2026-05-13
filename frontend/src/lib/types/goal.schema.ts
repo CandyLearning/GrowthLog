@@ -26,8 +26,16 @@ export const UpdateGoalStatusRequestSchema = z.object({
   status: GoalStatusSchema,
 })
 
+export const UpdateGoalRequestSchema = z.object({
+  title: z.string().optional(),
+  description: z.string().optional(),
+  start_date: z.string().optional(),
+  end_date: z.string().optional(),
+})
+
 export type GoalStatus = z.infer<typeof GoalStatusSchema>
 export type Goal = z.infer<typeof GoalSchema>
 export type GoalListResponse = z.infer<typeof GoalListResponseSchema>
 export type CreateGoalRequest = z.infer<typeof CreateGoalRequestSchema>
 export type UpdateGoalStatusRequest = z.infer<typeof UpdateGoalStatusRequestSchema>
+export type UpdateGoalRequest = z.infer<typeof UpdateGoalRequestSchema>

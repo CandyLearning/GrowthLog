@@ -47,6 +47,75 @@ export const goalHandlers = [
     return HttpResponse.json({ success: true, data: { success: true } })
   }),
 
+  // PATCH /api/v1/goals/:goalId — updateGoal
+  // 400: title is empty string
+  // 403: goal belongs to another user (simulated: ID < 0)
+  // 404: goal not found
+  http.patch('/api/v1/goals/:goalId', async ({ params, request }) => {
+    const goalId = Number(params.goalId)
+    const body = await request.json() as { title?: string; description?: string; start_date?: string; end_date?: string }
+    const goal = goalState.find(g => g.goal_id === goalId)
+
+    if (!goal) {
+      return HttpResponse.json(
+        { success: false, error: { code: 'NOT_FOUND', message: '學習目標不存在' } },
+        { status: 404 }
+      )
+    }
+
+    if (goalId < 0) {
+      return HttpResponse.json(
+        { success: false, error: { code: 'UNAUTHORIZED', message: '無權操作他人的學習目標' } },
+        { status: 403 }
+      )
+    }
+
+    if (body.title !== undefined && body.title.trim() === '') {
+      return HttpResponse.json(
+        { success: false, error: { code: 'MISSING_REQUIRED_FIELD', message: '目標標題不可為空' } },
+        { status: 400 }
+      )
+    }
+
+    goalState = goalState.map(g =>
+      g.goal_id === goalId
+        ? {
+            ...g,
+            ...(body.title !== undefined ? { title: body.title } : {}),
+            ...(body.description !== undefined ? { description: body.description } : {}),
+            ...(body.start_date !== undefined ? { start_date: body.start_date } : {}),
+            ...(body.end_date !== undefined ? { end_date: body.end_date } : {}),
+          }
+        : g
+    )
+    return HttpResponse.json({ success: true, data: { success: true } })
+  }),
+
+  // DELETE /api/v1/goals/:goalId — deleteGoal
+  // 403: goal belongs to another user (simulated: ID < 0)
+  // 404: goal not found
+  http.delete('/api/v1/goals/:goalId', ({ params }) => {
+    const goalId = Number(params.goalId)
+    const goal = goalState.find(g => g.goal_id === goalId)
+
+    if (!goal) {
+      return HttpResponse.json(
+        { success: false, error: { code: 'NOT_FOUND', message: '學習目標不存在' } },
+        { status: 404 }
+      )
+    }
+
+    if (goalId < 0) {
+      return HttpResponse.json(
+        { success: false, error: { code: 'UNAUTHORIZED', message: '無權操作他人的學習目標' } },
+        { status: 403 }
+      )
+    }
+
+    goalState = goalState.filter(g => g.goal_id !== goalId)
+    return HttpResponse.json({ success: true, data: { success: true } })
+  }),
+
   // PATCH /api/v1/goals/:goalId/status — updateGoalStatus
   // 403: goal belongs to another user (simulated: ID 0 range)
   // 404: goal not found
