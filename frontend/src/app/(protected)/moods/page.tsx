@@ -5,6 +5,7 @@ import { listMoods, createMood, updateMood, deleteMood } from '@/lib/api/mood'
 import { ApiClientError } from '@/lib/api/client'
 import { Toast } from '@/components/Toast'
 import { Modal } from '@/components/ui/Modal'
+import { usePetName } from '@/lib/hooks/usePetName'
 import type { MoodEntry, MoodType } from '@/lib/types/mood.schema'
 import styles from './page.module.css'
 
@@ -22,6 +23,7 @@ const MOOD_LABEL: Record<MoodType, string> = {
 }
 
 export default function MoodsPage() {
+  const petName = usePetName()
   const [entries, setEntries] = useState<MoodEntry[]>([])
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState<MoodType | null>(null)
@@ -79,7 +81,7 @@ export default function MoodsPage() {
     setSubmitting(true)
     try {
       await createMood({ mood_type: selected, note: note.trim() || undefined })
-      setToast('心情記錄成功！小玉快樂值 +3 💛')
+      setToast(`心情記錄成功！${petName}快樂值 +3 💛`)
       setSelected(null)
       setNote('')
       refresh()
@@ -126,7 +128,7 @@ export default function MoodsPage() {
               disabled={!selected || submitting}
               data-testid="submit-mood"
             >
-              {submitting ? '記錄中…' : '記錄心情 ✦ 小玉 +3 💛'}
+              {submitting ? '記錄中…' : `記錄心情 ✦ ${petName} +3 💛`}
             </button>
           </div>
         </form>

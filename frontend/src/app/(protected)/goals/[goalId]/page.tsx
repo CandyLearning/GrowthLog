@@ -7,6 +7,7 @@ import { listRecords, createRecord, updateRecord, deleteRecord } from '@/lib/api
 import { ApiClientError } from '@/lib/api/client'
 import { Toast } from '@/components/Toast'
 import { Modal } from '@/components/ui/Modal'
+import { usePetName } from '@/lib/hooks/usePetName'
 import type { Goal, GoalStatus } from '@/lib/types/goal.schema'
 import type { LearningRecord } from '@/lib/types/record.schema'
 import styles from './page.module.css'
@@ -26,6 +27,7 @@ const VALID_TRANSITIONS: Record<GoalStatus, GoalStatus[]> = {
 }
 
 export default function GoalDetailPage() {
+  const petName = usePetName()
   const params = useParams()
   const router = useRouter()
   const goalId = Number(params.goalId)
@@ -90,7 +92,7 @@ export default function GoalDetailPage() {
         content: form.content.trim() || undefined,
         image: form.image ?? undefined,
       })
-      setToast('📝 學習紀錄新增成功！小玉快樂值 +10 💛')
+      setToast(`📝 學習紀錄新增成功！${petName}快樂值 +10 💛`)
       setAddOpen(false)
       setForm({ title: '', content: '', image: null })
       refresh()
@@ -194,7 +196,7 @@ export default function GoalDetailPage() {
           <div className="state-box">
             <div className="state-box-icon">📝</div>
             <h3>還沒有學習紀錄</h3>
-            <p>記錄今天的學習，讓小玉開心！</p>
+            <p>記錄今天的學習，讓{petName}開心！</p>
             <button className="btn btn-primary" style={{ marginTop: 16 }} onClick={() => setAddOpen(true)}>
               ＋ 新增第一筆紀錄
             </button>
@@ -274,7 +276,7 @@ export default function GoalDetailPage() {
               </div>
             </div>
             <div className={styles.petHint}>
-              🐾 新增紀錄後，小玉的快樂值將增加 +10！
+              🐾 新增紀錄後，{petName}的快樂值將增加 +10！
             </div>
             {formError && <p className={styles.formError}>{formError}</p>}
           </form>

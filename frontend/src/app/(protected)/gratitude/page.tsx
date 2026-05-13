@@ -5,6 +5,7 @@ import { listGratitude, createGratitude, updateGratitude, deleteGratitude } from
 import { ApiClientError } from '@/lib/api/client'
 import { Toast } from '@/components/Toast'
 import { Modal } from '@/components/ui/Modal'
+import { usePetName } from '@/lib/hooks/usePetName'
 import type { GratitudeEntry } from '@/lib/types/gratitude.schema'
 import styles from './page.module.css'
 
@@ -24,6 +25,7 @@ function formatDate(date: string): string {
 }
 
 export default function GratitudePage() {
+  const petName = usePetName()
   const [entries, setEntries] = useState<GratitudeEntry[]>([])
   const [loading, setLoading] = useState(true)
   const [content, setContent] = useState('')
@@ -54,7 +56,7 @@ export default function GratitudePage() {
     setSubmitting(true)
     try {
       await createGratitude({ content: content.trim() })
-      setToast('✨ 感謝已記錄！小玉快樂值 +8 💛')
+      setToast(`✨ 感謝已記錄！${petName}快樂值 +8 💛`)
       setContent('')
       refresh()
     } catch (err) {
@@ -108,7 +110,7 @@ export default function GratitudePage() {
           <div className={styles.composerFooter}>
             <button className="btn btn-peach" type="submit" disabled={!content.trim() || submitting}
               style={{ fontWeight: 700 }} data-testid="submit-gratitude">
-              {submitting ? '記錄中…' : '記錄感謝 ✦ 小玉 +8 💛'}
+              {submitting ? '記錄中…' : `記錄感謝 ✦ ${petName} +8 💛`}
             </button>
           </div>
         </form>
