@@ -2,10 +2,16 @@
 
 ## 審查進度
 
-- [x] 05.1 相關規格已審查 — **簽名**: 2026-05-11 00:00
-- [x] 05.2 交付物已審查 — **簽名**: 2026-05-11 00:00
+- [x] 05.1 相關規格已審查 — **簽名**: 2026-05-13 00:00
+- [x] 05.2 交付物已審查 — **簽名**: 2026-05-13 00:00
 
-> **本次 scope（2026-05-11 補充循環）**：僅針對 4 個新 feature 的 TDD：
+> **本次 scope（2026-05-13 補充循環）**：僅針對 2 個新 feature 的 TDD：
+> - `learning-goal/編輯學習目標.feature`
+> - `learning-goal/刪除學習目標.feature`
+>
+> *(前次 scope 2026-05-11 已完成：learning-record + mood 編輯/刪除)*
+
+> **本次 scope（2026-05-11 補充循環 — 已完成）**：4 個新 feature 的 TDD：
 > - `learning-record/編輯學習紀錄.feature`
 > - `learning-record/刪除學習紀錄.feature`
 > - `mood/編輯心情紀錄.feature`

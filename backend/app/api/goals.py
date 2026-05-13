@@ -3,8 +3,8 @@ from typing import Optional
 from fastapi import APIRouter, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
-from app.schemas.goals import CreateGoalRequest, Goal, UpdateGoalStatusRequest
-from app.services.goal_service import create_goal, list_goals, update_goal_status
+from app.schemas.goals import CreateGoalRequest, Goal, UpdateGoalRequest, UpdateGoalStatusRequest
+from app.services.goal_service import create_goal, delete_goal, list_goals, update_goal, update_goal_status
 from app.core.security import decode_token
 from app.core.deps import get_db
 from app.exceptions import error_response
@@ -64,6 +64,51 @@ def list_goals_endpoint(
             for g in goals
         ]
     }
+
+
+@router.patch("/{goal_id}")
+def update_goal_endpoint(
+    goal_id: int,
+    body: UpdateGoalRequest,
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(_bearer),
+    db: Session = Depends(get_db),
+):
+    if credentials is None:
+        return error_response("UNAUTHORIZED")
+    try:
+        payload = decode_token(credentials.credentials)
+    except ValueError as e:
+        return error_response(str(e))
+    user_id = payload["user_id"]
+
+    try:
+        update_goal(user_id, goal_id, body.model_dump(), body.model_fields_set, db)
+    except ValueError as e:
+        return error_response(str(e))
+
+    return {"success": True}
+
+
+@router.delete("/{goal_id}")
+def delete_goal_endpoint(
+    goal_id: int,
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(_bearer),
+    db: Session = Depends(get_db),
+):
+    if credentials is None:
+        return error_response("UNAUTHORIZED")
+    try:
+        payload = decode_token(credentials.credentials)
+    except ValueError as e:
+        return error_response(str(e))
+    user_id = payload["user_id"]
+
+    try:
+        delete_goal(user_id, goal_id, db)
+    except ValueError as e:
+        return error_response(str(e))
+
+    return {"success": True}
 
 
 @router.patch("/{goal_id}/status")

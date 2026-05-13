@@ -33,3 +33,7 @@ class LearningRecordRepository:
     def delete(self, record: LearningRecord) -> None:
         self.session.delete(record)
         self.session.commit()
+
+    def delete_all_by_goal(self, goal_id: int) -> None:
+        self.session.query(LearningRecord).filter_by(goal_id=goal_id).delete()
+        self.session.commit()

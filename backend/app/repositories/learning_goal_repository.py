@@ -22,6 +22,10 @@ class LearningGoalRepository:
     def find_by_id(self, goal_id: int) -> Optional[LearningGoal]:
         return self.session.query(LearningGoal).filter_by(id=goal_id).first()
 
+    def delete(self, goal: LearningGoal) -> None:
+        self.session.delete(goal)
+        self.session.commit()
+
     def find_all_by_user(self, user_id: int) -> List[LearningGoal]:
         return (
             self.session.query(LearningGoal)

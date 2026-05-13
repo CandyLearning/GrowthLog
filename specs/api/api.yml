@@ -134,6 +134,48 @@ paths:
         '400':
           $ref: '#/components/responses/ErrorResponse'
 
+  /goals/{goalId}:
+    patch:
+      operationId: updateGoal
+      summary: 編輯學習目標
+      parameters:
+        - name: goalId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateGoalRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+    delete:
+      operationId: deleteGoal
+      summary: 刪除學習目標（cascade 刪除所有相關學習紀錄）
+      parameters:
+        - name: goalId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+
   /goals/{goalId}/status:
     patch:
       operationId: updateGoalStatus
@@ -604,6 +646,21 @@ components:
       properties:
         title:
           type: string
+        description:
+          type: string
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+
+    UpdateGoalRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: 目標標題（Partial update：省略則保留原值；不可傳空字串）
         description:
           type: string
         start_date:

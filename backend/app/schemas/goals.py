@@ -22,5 +22,12 @@ class GoalListResponse(BaseModel):
     goals: List[Goal]
 
 
+class UpdateGoalRequest(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+
+
 class UpdateGoalStatusRequest(BaseModel):
     status: str
