@@ -10,8 +10,7 @@
   border-bottom: 1.5px solid var(--border);
 }
 .brandTitle {
-  font-family: 'Klee One', cursive;
-  font-size: 21px; font-weight: 600;
+  font-size: 21px; font-weight: 700;
   color: var(--sakura-dark); letter-spacing: .03em;
 }
 .brandSub { font-size: 11px; color: var(--text-muted); margin-top: 2px; font-weight: 300; }

@@ -22,8 +22,7 @@
   margin-bottom: 22px;
 }
 .title {
-  font-family: 'Klee One', cursive;
-  font-size: 20px; font-weight: 600; color: var(--text);
+  font-size: 20px; font-weight: 700; color: var(--text);
 }
 .close {
   width: 30px; height: 30px; border-radius: 50%;

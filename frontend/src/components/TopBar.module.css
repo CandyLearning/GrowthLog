@@ -5,11 +5,9 @@
   flex-shrink: 0; box-shadow: var(--shadow-sm); position: relative; z-index: 100;
 }
 .title {
-  font-family: 'Klee One', cursive;
-  font-size: 19px; font-weight: 600; color: var(--text); flex: 1;
+  font-size: 19px; font-weight: 700; color: var(--text); flex: 1;
 }
 .subtitle {
-  font-family: 'M PLUS Rounded 1c', sans-serif;
   font-size: 12px; font-weight: 400; color: var(--text-muted); margin-left: 6px;
 }
 .userArea { position: relative; }

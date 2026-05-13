@@ -4,8 +4,7 @@
   box-shadow: var(--shadow-sm); margin-bottom: 24px;
 }
 .recorderTitle {
-  font-family: 'Klee One', cursive;
-  font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 18px;
+  font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 18px;
 }
 .moodGrid {
   display: grid; grid-template-columns: repeat(6, 1fr);
@@ -40,7 +39,7 @@
   border: 1.5px solid var(--border);
   border-radius: var(--radius-md);
   font-size: 14.5px;
-  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-family: inherit;
   color: var(--text);
   background: var(--sky-pale);
   resize: vertical;

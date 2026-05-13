@@ -6,7 +6,7 @@
 .goalHeaderAccent { height: 6px; background: linear-gradient(90deg, var(--mint), var(--sky-light)); }
 .goalHeaderBody   { padding: 22px 24px; }
 .goalHeaderTop    { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-.goalTitle        { font-family: 'Klee One', cursive; font-size: 26px; font-weight: 600; color: var(--text); line-height: 1.2; }
+.goalTitle        { font-size: 26px; font-weight: 700; color: var(--text); line-height: 1.2; }
 .goalDesc         { font-size: 14px; color: var(--text-mid); margin-top: 6px; }
 .dates            { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
 .dateItem         { display: flex; flex-direction: column; gap: 2px; }
@@ -14,7 +14,7 @@
 .dateValue        { font-size: 14px; font-weight: 500; color: var(--text); }
 
 .recordsHeader    { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-.recordsTitle     { font-family: 'Klee One', cursive; font-size: 19px; font-weight: 600; color: var(--text); }
+.recordsTitle     { font-size: 19px; font-weight: 700; color: var(--text); }
 
 .recordCard {
   background: var(--white); border-radius: var(--radius-md);
